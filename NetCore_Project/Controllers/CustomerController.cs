@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using NetCore_Project.DTO.Customer;
+using NetCore_Project.DTO.PagedResult;
 using NetCore_Project.DTO.Products;
 using NetCore_Project.IServices;
 using NetCore_Project.Models;
@@ -23,9 +25,9 @@ namespace NetCore_Project.Controllers
             return null;
         }
         [HttpGet]
-        public List<CustomerDto> List([FromRoute] CustomerFilterDto dto)
+        public PagedResultDto<CustomerDto> List([FromQuery] CustomerFilterDto dto, int pageIndex, int pageSize)
         {
-            return _customerService.GetListCustomer(dto);
+            return _customerService.GetListCustomer(dto, pageIndex, pageSize);
         }
 
         [HttpGet]

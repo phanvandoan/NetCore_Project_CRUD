@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetCore_Project.Middleware;
 using NetCore_Project.Models;
+using NetCore_Project.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,9 @@ builder.Services.AddDbContext<ExampleDbContext>(option => option.UseSqlServer(bu
 //dang ky collect interface
 builder.Services.RegisterIoCs(builder.Configuration);
 
-builder.Services.AddAutoMapper(typeof(Program));
+//builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
 var app = builder.Build();
 

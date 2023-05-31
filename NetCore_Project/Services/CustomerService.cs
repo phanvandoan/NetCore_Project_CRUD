@@ -1,25 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NetCore_Project.DTO.Customer;
+using NetCore_Project.DTO.PagedResult;
 using NetCore_Project.IServices;
 using NetCore_Project.Models;
 using Newtonsoft.Json;
+using System.Drawing.Printing;
 using System.Net.NetworkInformation;
+using static StackExchange.Redis.Role;
 
 namespace NetCore_Project.Services
 {
     public class CustomerService : ICustomerService
     {
         private readonly ExampleDbContext _context;
-        public CustomerService(ExampleDbContext context)
+        private readonly IMapper _mapper;
+        public CustomerService(ExampleDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
-        public List<CustomerDto> GetListCustomer(CustomerFilterDto dto)
+        public PagedResultDto<CustomerDto> GetListCustomer(CustomerFilterDto dto, int pageIndex, int pageSize)
         {
-            List<CustomerDto> listCustomer= new();
-            listCustomer = Filter(dto);
-            return listCustomer;
+            var listCustomer = Filter(dto, pageIndex, pageSize);
+            List<CustomerDto> customerDtos = _mapper.Map<List<CustomerDto>>(listCustomer);
+            PagedResultDto<CustomerDto> pagedResult = new PagedResultDto<CustomerDto>(pageIndex, pageSize, listCustomer.Count(), customerDtos);
+            return pagedResult;
         }
 
         public async Task<CustomerDto> GetCustomerById(long id)
@@ -112,7 +119,7 @@ namespace NetCore_Project.Services
 
                 throw ex;
             }
-            
+
         }
 
         public async Task<string> Delete(long id)
@@ -134,31 +141,55 @@ namespace NetCore_Project.Services
 
         }
 
-        private List<CustomerDto> Filter(CustomerFilterDto dto)
+        //private List<Customer> Filter(CustomerFilterDto dto, int pageIndex, int pageSize)
+        //{
+        //    var query = _context.Customers.AsQueryable();
+        //    if (dto.Id.HasValue)
+        //    {
+        //        query = query.Where(entity => entity.Id == dto.Id);
+        //    }
+        //    if (!string.IsNullOrWhiteSpace(dto.CustomerNo))
+        //    {
+        //        query = query.Where(entity => entity.CustomerNo == dto.CustomerNo);
+        //    }
+        //    if (!string.IsNullOrWhiteSpace(dto.CustomerTaxNo))
+        //    {
+        //        query = query.Where(entity => entity.CustomerTaxNo == dto.CustomerTaxNo);
+        //    }
+        //    if (dto.StatusId.HasValue)
+        //    {
+        //        query = query.Where(entity => entity.StatusId == dto.StatusId);
+        //    }
+        //    var entities = query.ToList().Skip((pageIndex - 1) * pageSize).Take(pageSize); 
+        //    return entities;
+        //}
+
+        private List<Customer> Filter(CustomerFilterDto dto, int pageIndex, int pageSize)
         {
             var query = _context.Customers.AsQueryable();
-            if (dto.Id != 0)
+            if (dto.Id.HasValue)
             {
                 query = query.Where(entity => entity.Id == dto.Id);
             }
-            if (!string.IsNullOrEmpty(dto.CustomerNo))
+            if (!string.IsNullOrWhiteSpace(dto.CustomerNo))
             {
                 query = query.Where(entity => entity.CustomerNo == dto.CustomerNo);
             }
-            if (!string.IsNullOrEmpty(dto.CustomerTaxNo))
+            if (!string.IsNullOrWhiteSpace(dto.CustomerTaxNo))
             {
                 query = query.Where(entity => entity.CustomerTaxNo == dto.CustomerTaxNo);
             }
-            if (dto.StatusId != 0)
+            if (dto.StatusId.HasValue)
             {
                 query = query.Where(entity => entity.StatusId == dto.StatusId);
             }
-
-            var entities = query.ToList();
-            var json = JsonConvert.SerializeObject(entities);
-            var res = JsonConvert.DeserializeObject<List<CustomerDto>>(json);
-            return res;
-
+            if (pageIndex >= 1)
+            {
+                query = query.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+            }
+            var entities=query.ToList();
+            return entities;
         }
+
     }
 }
