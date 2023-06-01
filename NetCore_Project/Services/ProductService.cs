@@ -7,6 +7,8 @@ using AutoMapper;
 using SharpCompress.Common;
 using NetCore_Project.DTO.Customer;
 using Newtonsoft.Json;
+using NetCore_Project.DTO.PagedResult;
+using System.Drawing.Printing;
 
 namespace NetCore_Project.Services
 {
@@ -24,64 +26,37 @@ namespace NetCore_Project.Services
             return null;
         }
 
-        public IQueryable<List<ProductDto>> GetListProduct(FilterDto dto)
+        public PagedResultDto<ProductDto> GetListProduct(FilterDto dto, int pageIndex, int pageSize)
         {
-            return null;
+            var listProduct = Filter(dto, pageIndex, pageSize);
+            List<ProductDto> productDtos = _mapper.Map<List<ProductDto>>(listProduct);
+            PagedResultDto<ProductDto> pagedResult = new PagedResultDto<ProductDto>(pageIndex, pageSize, listProduct.Count(), productDtos);
+            return pagedResult;
         }
         public async Task<ProductDto> GetProductById(long id)
         {
-            ProductDto res = new();
             var product = await _context.Customers.FindAsync(id);
-            var json = JsonConvert.SerializeObject(product);
-            res = JsonConvert.DeserializeObject<ProductDto>(json);
-            return res;
+            ProductDto productDtos = _mapper.Map<ProductDto>(product);
+            return productDtos;
         }
-
-
         public async Task<ProductDto> Create(ProductDto dto)
         {
-            ProductDto res = new();
-            var products = new Product()
-            {
-                StatusId = dto.StatusId,
-                RowId = Guid.NewGuid(),
-                Used = dto.Used,
-                CreatedAt = dto.CreatedAt,
-                UpdatedAt = dto.UpdatedAt,
-                DeletedAt = dto.DeletedAt,
-                ProductNo = dto.ProductNo,
-                ProductName = dto.ProductName,
-                Unit = dto.Unit,
-            };
-            var json = JsonConvert.SerializeObject(products);
-            res = JsonConvert.DeserializeObject<ProductDto>(json);
-
-            await _context.Products.AddAsync(products);
+            var productDtos = _mapper.Map<Product>(dto);
+            await _context.Products.AddAsync(productDtos);
             await _context.SaveChangesAsync();
-            return res;
+            return _mapper.Map<ProductDto>(dto);
         }
 
         public async Task<Product> update(long id, ProductDto dto)
         {
-            Product product = await _context.Products!.FindAsync(id);
-            if (product != null)
+            Product product = await _context.Products.FindAsync(id);
+            if (product == null)
             {
-                product.StatusId = dto.StatusId;
-                product.RowId = dto.RowId;
-                product.Used = dto.Used;
-                product.CreatedAt = dto.CreatedAt;
-                product.UpdatedAt = dto.UpdatedAt;
-                product.DeletedAt = dto.DeletedAt;
-                product.ProductNo = dto.ProductNo;
-                product.ProductName = dto.ProductName;
-                product.Unit = dto.Unit;
-                await _context.SaveChangesAsync();
+                return null;
             }
-            else
-            {
-
-            }
-            return product;
+            var productDtos = _mapper.Map(dto, product);
+            await _context.SaveChangesAsync();
+            return productDtos;
         }
 
         public async Task<string> Delete(long id)
@@ -101,6 +76,33 @@ namespace NetCore_Project.Services
                 return ex.Message;
             }
             
+        }
+
+        private List<Product> Filter(FilterDto dto, int pageIndex, int pageSize)
+        {
+            var query = _context.Products.AsQueryable();
+            if (dto.Id.HasValue)
+            {
+                query = query.Where(entity => entity.Id == dto.Id);
+            }
+            if (!string.IsNullOrWhiteSpace(dto.ProductNo))
+            {
+                query = query.Where(entity => entity.ProductNo == dto.ProductNo);
+            }
+            if (!string.IsNullOrWhiteSpace(dto.ProductName))
+            {
+                query = query.Where(entity => entity.ProductName == dto.ProductName);
+            }
+            if (!string.IsNullOrWhiteSpace(dto.Unit))
+            {
+                query = query.Where(entity => entity.Unit == dto.Unit);
+            }
+            if (pageIndex >= 1)
+            {
+                query = query.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+            }
+            var entities = query.ToList();
+            return entities;
         }
     }
 }

@@ -38,10 +38,9 @@ namespace NetCore_Project.Controllers
         }
 
         [HttpPost]
-        public Task<ProductDto> Create(ProductDto dto)
+        public async Task<ProductDto> Create(ProductDto dto)
         {
-
-            return _productService.Create(dto);
+            return await _productService.Create(dto);
         }
 
         [HttpPut]

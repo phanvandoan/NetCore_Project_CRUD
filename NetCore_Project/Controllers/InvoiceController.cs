@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NetCore_Project.DTO.Customer;
 using NetCore_Project.DTO.Invoice;
+using NetCore_Project.DTO.PagedResult;
 using NetCore_Project.DTO.Products;
 using NetCore_Project.IServices;
+using NetCore_Project.Services;
 
 namespace NetCore_Project.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class InvoiceController : ControllerBase
     {
@@ -15,23 +18,17 @@ namespace NetCore_Project.Controllers
         {
             _invoiceService = invoiceService;
         }
+        [HttpGet]
+        public PagedResultDto<InvoiceDto> List([FromQuery] InvoiceFilterDto dto, int pageIndex, int pageSize)
+        {
+            return _invoiceService.GetListInvoice(dto, pageIndex, pageSize);
+        }
 
-        //[HttpGet]
-        //public IActionResult Count()
-        //{
-        //    return null;
-        //}
-        //[HttpGet]
-        //public async Task<List<InvoiceDto>> List(FilterDto dto)
-        //{
-        //    return null;
-        //}
-
-        //[HttpGet]
-        //public IQueryable<InvoiceDto> Get(long id)
-        //{
-        //    return null;
-        //}
+        [HttpGet]
+        public async Task<InvoiceDto> Get(long id)
+        {
+            return await _invoiceService.GetInvoiceById(id);
+        }
 
         [HttpPost]
         public Task<InvoiceDto> Create(InvoiceDto dto)

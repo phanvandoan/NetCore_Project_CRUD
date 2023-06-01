@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Nest;
 using NetCore_Project.DTO.Customer;
 using NetCore_Project.DTO.PagedResult;
 using NetCore_Project.IServices;
@@ -33,11 +34,9 @@ namespace NetCore_Project.Services
         {
             try
             {
-                CustomerDto res = new();
                 var customer = await _context.Customers.FindAsync(id);
-                var json = JsonConvert.SerializeObject(customer);
-                res = JsonConvert.DeserializeObject<CustomerDto>(json);
-                return res;
+                CustomerDto customerDtos = _mapper.Map<CustomerDto>(customer);
+                return customerDtos;
             }
             catch (Exception ex)
             {
@@ -49,32 +48,10 @@ namespace NetCore_Project.Services
         {
             try
             {
-                CustomerDto res = new();
-                var customers = new Customer()
-                {
-                    StatusId = dto.StatusId,
-                    RowId = Guid.NewGuid(),
-                    Used = dto.Used,
-                    CreatedAt = dto.CreatedAt,
-                    UpdatedAt = dto.UpdatedAt,
-                    DeletedAt = dto.DeletedAt,
-                    CustomerNo = dto.CustomerNo,
-                    CustomerFirstName = dto.CustomerFirstName,
-                    CustomerLastName = dto.CustomerLastName,
-                    CustomerCompany = dto.CustomerCompany,
-                    CustomerAddress = dto.CustomerAddress,
-                    CustomerDistrict = dto.CustomerDistrict,
-                    CustomerCity = dto.CustomerCity,
-                    CustomerAccountNo = dto.CustomerAccountNo,
-                    CustomerTaxNo = dto.CustomerTaxNo,
-                };
-
-                var json = JsonConvert.SerializeObject(customers);
-                res = JsonConvert.DeserializeObject<CustomerDto>(json);
-
-                await _context.Customers.AddAsync(customers);
+                var customerDtos = _mapper.Map<Customer>(dto);
+                await _context.Customers.AddAsync(customerDtos);
                 await _context.SaveChangesAsync();
-                return res;
+                return _mapper.Map<CustomerDto>(dto);
             }
             catch (Exception ex)
             {
@@ -88,31 +65,14 @@ namespace NetCore_Project.Services
             try
             {
                 Customer customer = await _context.Customers.FindAsync(id);
-                if (customer != null)
-                {
-                    customer.StatusId = dto.StatusId;
-                    customer.RowId = dto.RowId;
-                    customer.Used = dto.Used;
-                    customer.CreatedAt = dto.CreatedAt;
-                    customer.UpdatedAt = dto.UpdatedAt;
-                    customer.DeletedAt = dto.DeletedAt;
-                    customer.CustomerNo = dto.CustomerNo;
-                    customer.CustomerFirstName = dto.CustomerFirstName;
-                    customer.CustomerLastName = dto.CustomerLastName;
-                    customer.CustomerCompany = dto.CustomerCompany;
-                    customer.CustomerAddress = dto.CustomerAddress;
-                    customer.CustomerDistrict = dto.CustomerDistrict;
-                    customer.CustomerCity = dto.CustomerCity;
-                    customer.CustomerAccountNo = dto.CustomerAccountNo;
-                    customer.CustomerTaxNo = dto.CustomerTaxNo;
-
-                    await _context.SaveChangesAsync();
-                }
-                else
+                if (customer == null)
                 {
                     return null;
+
                 }
-                return customer;
+                var customerDtos = _mapper.Map(dto, customer);
+                await _context.SaveChangesAsync();
+                return customerDtos;
             }
             catch (Exception ex)
             {
@@ -141,29 +101,6 @@ namespace NetCore_Project.Services
 
         }
 
-        //private List<Customer> Filter(CustomerFilterDto dto, int pageIndex, int pageSize)
-        //{
-        //    var query = _context.Customers.AsQueryable();
-        //    if (dto.Id.HasValue)
-        //    {
-        //        query = query.Where(entity => entity.Id == dto.Id);
-        //    }
-        //    if (!string.IsNullOrWhiteSpace(dto.CustomerNo))
-        //    {
-        //        query = query.Where(entity => entity.CustomerNo == dto.CustomerNo);
-        //    }
-        //    if (!string.IsNullOrWhiteSpace(dto.CustomerTaxNo))
-        //    {
-        //        query = query.Where(entity => entity.CustomerTaxNo == dto.CustomerTaxNo);
-        //    }
-        //    if (dto.StatusId.HasValue)
-        //    {
-        //        query = query.Where(entity => entity.StatusId == dto.StatusId);
-        //    }
-        //    var entities = query.ToList().Skip((pageIndex - 1) * pageSize).Take(pageSize); 
-        //    return entities;
-        //}
-
         private List<Customer> Filter(CustomerFilterDto dto, int pageIndex, int pageSize)
         {
             var query = _context.Customers.AsQueryable();
@@ -187,7 +124,7 @@ namespace NetCore_Project.Services
             {
                 query = query.Skip((pageIndex - 1) * pageSize).Take(pageSize);
             }
-            var entities=query.ToList();
+            var entities = query.ToList();
             return entities;
         }
 
