@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace NetCore_Project.DTO.Customer
+namespace NetCore_Project.DTO.FilterDTO
 {
     public class CustomerFilterDto
     {

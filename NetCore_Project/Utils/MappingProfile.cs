@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using NetCore_Project.DTO.Customer;
-using NetCore_Project.DTO.Invoice;
-using NetCore_Project.DTO.Invoice.InvoiceDetails;
-using NetCore_Project.DTO.Products;
+using NetCore_Project.DTO.DataDTO;
+using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
+using System.Linq.Expressions;
 
 namespace NetCore_Project.Utils
 {
@@ -26,6 +25,9 @@ namespace NetCore_Project.Utils
 
             CreateMap<InvoiceDetail, InvoiceDetailDto>().ReverseMap();
             CreateMap<InvoiceDetailDto, InvoiceDetail>().ForMember(dest => dest.Id, opt => opt.Ignore());
+
+            CreateMap<ProductFilterDto, Expression<Func<Product, bool>>>().ReverseMap();
+            CreateMap<Expression<Func<ProductDto, bool>>, Expression<Func<Product, bool>>>().ReverseMap();
         }
     }
 }

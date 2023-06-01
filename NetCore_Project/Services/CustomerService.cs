@@ -1,15 +1,7 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Nest;
-using NetCore_Project.DTO.Customer;
-using NetCore_Project.DTO.PagedResult;
-using NetCore_Project.IServices;
+using NetCore_Project.DTO.DataDTO;
+using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
-using Newtonsoft.Json;
-using System.Drawing.Printing;
-using System.Net.NetworkInformation;
-using static StackExchange.Redis.Role;
 
 namespace NetCore_Project.Services
 {

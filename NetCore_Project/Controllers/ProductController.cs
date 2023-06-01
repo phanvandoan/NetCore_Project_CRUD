@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Nest;
-using NetCore_Project.DTO.Products;
-using NetCore_Project.IServices;
+using NetCore_Project.DTO.DataDTO;
+using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
+using NetCore_Project.Services;
 using SmartFormat.Core.Output;
+using System.Linq.Expressions;
 using System.Text.Json.Nodes;
 
 namespace NetCore_Project.Controllers
@@ -14,50 +17,49 @@ namespace NetCore_Project.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private IProductService _productService;
-        public ProductController(IProductService productService)
+        private readonly IProductService _productService;
+        private readonly IMapper _mapper;
+        public ProductController(IProductService productService, IMapper mapper)
         {
             _productService = productService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public IActionResult Count()
+        public async Task<int> CountAll([FromQuery] ProductFilterDto filterDto)
         {
-            return null;
-        }
-        [HttpGet]
-        public async Task<ProductDto> GetAllProduct()
-        {
-            return await _productService.GetAllProduct();
+            var filterExpression = _mapper.Map<Expression<Func<ProductFilterDto, bool>>>(filterDto);
+            int count = await _productService.CountAll(filterExpression);
+            return count;
         }
 
-        [HttpGet]
-        public IQueryable<ProductDto> Get(long id)
-        {
-            return null;
-        }
-
-        //[HttpPost]
-        //public async Task<ProductDto> Create(ProductDto dto)
+        //[HttpGet]
+        //public IQueryable<ProductDto> Get(long id)
         //{
-        //    return await _productService.Create(dto);
+        //    return null;
         //}
-        [HttpPost]
-        public async Task<ProductDto> CreateProduct(ProductDto dto)
-        {
-            return await _productService.CreateProduct(dto);
-        }
 
-        [HttpPut]
-        public async Task<Product> Update(long id, ProductDto dto)
-        {
-            return await _productService.update(id, dto);
-        }
+        ////[HttpPost]
+        ////public async Task<ProductDto> Create(ProductDto dto)
+        ////{
+        ////    return await _productService.Create(dto);
+        ////}
+        //[HttpPost]
+        //public async Task<ProductDto> CreateProduct(ProductDto dto)
+        //{
+        //    return await _productService.CreateProduct(dto);
+        //}
 
-        [HttpDelete]
-        public async Task<string> Delete(long id)
-        {
-            return await _productService.Delete(id);
-        }
+        //[HttpPut]
+        //public async Task<Product> Update(long id, ProductDto dto)
+        //{
+        //    return await _productService.update(id, dto);
+        //}
+
+        //[HttpDelete]
+        //public async Task<string> Delete(long id)
+        //{
+        //    return await _productService.Delete(id);
+        //}
     }
 }

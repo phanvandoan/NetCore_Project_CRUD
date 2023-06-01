@@ -1,8 +1,7 @@
-﻿using NetCore_Project.DTO.Customer;
-using NetCore_Project.DTO.Invoice;
-using NetCore_Project.DTO.PagedResult;
+﻿using NetCore_Project.DTO.DataDTO;
+using NetCore_Project.DTO.FilterDTO;
 
-namespace NetCore_Project.IServices
+namespace NetCore_Project.Services
 {
     public interface IInvoiceService
     {

@@ -1,4 +1,4 @@
-﻿namespace NetCore_Project.DTO.Products
+﻿namespace NetCore_Project.DTO.DataDTO
 {
     public class ProductDto : BaseModel
     {

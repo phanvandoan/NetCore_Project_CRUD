@@ -1,8 +1,8 @@
-﻿using NetCore_Project.DTO.Customer;
-using NetCore_Project.DTO.PagedResult;
+﻿using NetCore_Project.DTO.DataDTO;
+using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
 
-namespace NetCore_Project.IServices
+namespace NetCore_Project.Services
 {
     public interface ICustomerService
     {

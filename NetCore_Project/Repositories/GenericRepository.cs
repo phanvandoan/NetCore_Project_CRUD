@@ -1,88 +1,95 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetCore_Project.DTO;
-using NetCore_Project.Interfaces;
 using NetCore_Project.Models;
 using System.Linq.Expressions;
 
 namespace NetCore_Project.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
-        private readonly ExampleDbContext context;
-        private DbSet<T> entities;
-        string errorMessage = string.Empty;
+        private readonly DbContext _context;
+        private readonly DbSet<TEntity> _dbSet;
 
-        public GenericRepository(ExampleDbContext context)
+        public GenericRepository(DbContext context)
         {
-            this.context = context;
-            entities = context.Set<T>();
+            _context = context;
+            _dbSet = _context.Set<TEntity>();
         }
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<int> CountAll()
         {
-            //var query = context.Set<T>();
-            //return query;
-            try
+            return _dbSet.Count();
+        }
+        public int Count()
+        {
+            return _dbSet.Count();
+        }
+        public IEnumerable<TEntity> List()
+        {
+            return _dbSet.ToList();
+        }
+        public TEntity Get(int id)
+        {
+            return _dbSet.Find(id);
+        }
+        public void Create(TEntity entity)
+        {
+            _dbSet.Add(entity);
+        }
+
+        public void Update(TEntity entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+        }
+
+        public void Delete(TEntity entity)
+        {
+            _dbSet.Remove(entity);
+        }
+
+        public int CountAll(Expression<Func<TEntity, bool>> filter = null)
+        {
+            IQueryable<TEntity> query = _context.Set<TEntity>();
+
+            if (filter != null)
             {
-                var query = await context.Set<T>().ToListAsync();
-                return query;
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-            
-        }
-
-        public async Task<T> Get(long id, bool isActive = true)
-        {
-            //return entities.FirstOrDefault(s => s.Id == id)!;
-            return await context.Set<T>().FindAsync(id);
-        }
-
-        public IEnumerable<T> Filter(Expression<Func<T, bool>> filter)
-        {
-            return entities.Where(filter);
-        }
-
-        public void Insert(T entity, bool saveChange = true)
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException("entity");
+                query = query.Where(filter);
             }
 
-            //entity.CreatedAt = DateTime.Now;
-            //entity.UpdatedAt = DateTime.Now;
-
-            entities.Add(entity);
-
-            if (saveChange)
-                context.SaveChanges();
-
+            return query.Count();
         }
+        //public IEnumerable<TEntity> DynamicFind(Expression<Func<TEntity, bool>> filter)
+        //{
+        //    return _dbSet.Where(filter);
+        //}
 
-        public void Update(T entity, bool saveChange = true)
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException("entity");
-            }
-            //entity.UpdatedAt = DateTime.Now;
-            if (saveChange)
-                context.SaveChanges();
-        }
+        //public IEnumerable<TEntity> OrFilter(params Expression<Func<TEntity, bool>>[] filters)
+        //{
+        //    if (filters.Length == 0)
+        //        return Enumerable.Empty<TEntity>();
 
-        public void Delete(T entity, bool saveChange = true)
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException("entity");
-            }
-            entities.Remove(entity);
-            if (saveChange)
-                context.SaveChanges();
-        }
+        //    var combinedFilter = filters[0];
+        //    for (int i = 1; i < filters.Length; i++)
+        //    {
+        //        combinedFilter = Expression.Lambda<Func<TEntity, bool>>(
+        //            Expression.OrElse(combinedFilter.Body, filters[i].Body),
+        //            combinedFilter.Parameters);
+        //    }
+
+        //    var filterExpression = Expression.Lambda<Func<TEntity, bool>>(combinedFilter, filters[0].Parameters);
+        //    return _dbSet.Where(filterExpression);
+        //}
+
+        //public IEnumerable<TEntity> DynamicOrder(string property, bool isAscending)
+        //{
+        //    var entityType = typeof(TEntity);
+        //    var parameter = Expression.Parameter(entityType, "x");
+        //    var propertyExpression = Expression.Property(parameter, property);
+        //    var lambdaExpression = Expression.Lambda<Func<TEntity, dynamic>>(propertyExpression, parameter);
+
+        //    return isAscending
+        //        ? _dbSet.OrderBy(lambdaExpression)
+        //        : _dbSet.OrderByDescending(lambdaExpression);
+        //}
     }
 
 }

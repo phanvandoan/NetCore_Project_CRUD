@@ -1,7 +1,5 @@
-﻿using NetCore_Project.DTO.Invoice.InvoiceDetails;
-using NetCore_Project.Models;
-
-namespace NetCore_Project.DTO.Invoice
+﻿
+namespace NetCore_Project.DTO.DataDTO
 {
     public class InvoiceDto : BaseModel
     {

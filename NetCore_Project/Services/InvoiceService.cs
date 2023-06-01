@@ -1,16 +1,8 @@
 ﻿using AutoMapper;
-using HandlebarsDotNet;
-using Microsoft.EntityFrameworkCore;
-using Nest;
-using NetCore_Project.DTO.Customer;
-using NetCore_Project.DTO.Invoice;
-using NetCore_Project.DTO.Invoice.InvoiceDetails;
-using NetCore_Project.DTO.PagedResult;
-using NetCore_Project.DTO.Products;
-using NetCore_Project.IServices;
+using NetCore_Project.DTO.DataDTO;
+using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
 using Newtonsoft.Json;
-using NuGet.Packaging;
 
 namespace NetCore_Project.Services
 {

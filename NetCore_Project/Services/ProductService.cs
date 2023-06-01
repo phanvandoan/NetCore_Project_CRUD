@@ -1,56 +1,69 @@
 ﻿using AutoMapper;
-using Nest;
-using NetCore_Project.DTO.PagedResult;
-using NetCore_Project.DTO.Products;
-using NetCore_Project.Interfaces;
-using NetCore_Project.IServices;
+using Microsoft.AspNetCore.Mvc;
+using NetCore_Project.DTO.DataDTO;
+using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
+using NetCore_Project.Repositories;
+using System.Linq.Expressions;
 
 namespace NetCore_Project.Services
 {
     public class ProductService : IProductService
     {
-        private readonly ExampleDbContext _context;
+        //private readonly IGenericRepository<Product> _repository;
+
+        //public ProductService(IGenericRepository<Product> repository)
+        //{
+        //    _repository = repository;
+        //}
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IGenericRepository<Product> _genericRepository;
         private readonly IMapper _mapper;
-        private readonly IGenericRepository<Product> _productRepository;
 
-        public ProductService(ExampleDbContext context, IMapper mapper, IGenericRepository<Product> genericRepository)
+        public ProductService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _genericRepository = _unitOfWork.GetRepository<Product>();
             _mapper = mapper;
-            _productRepository = genericRepository;
         }
 
-        public async Task<ProductDto> GetAllProduct()
+        public async Task<int> CountAll(Expression<Func<ProductFilterDto, bool>> filter = null)
         {
-            var result = await _productRepository.GetAll();
-            return _mapper.Map<ProductDto>(result);
-        }
-        public async Task<ProductDto> CreateProduct(ProductDto dto)
-        {
-            throw new NotImplementedException();
+            //var count = await _genericRepository.CountAll(dto);
+            Expression<Func<Product, bool>> productFilter = null;
+            if (filter != null)
+            {
+                productFilter = _mapper.Map<Expression<Func<ProductFilterDto, bool>>, Expression<Func<Product, bool>>>(filter);
+            }
+
+            return _genericRepository.CountAll(productFilter); ;
 
         }
+        //public async Task<ProductDto> CreateProduct(ProductDto dto)
+        //{
+        //    throw new NotImplementedException();
 
-        public Task<string> Delete(long id)
-        {
-            throw new NotImplementedException();
-        }
+        //}
 
-        public PagedResultDto<ProductDto> GetListProduct(FilterDto dto, int pageIndex, int pageSize)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<string> Delete(long id)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public Task<ProductDto> GetProductById(long id)
-        {
-            throw new NotImplementedException();
-        }
+        //public PagedResultDto<ProductDto> GetListProduct(ProductFilterDto dto, int pageIndex, int pageSize)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public Task<Product> update(long id, ProductDto dto)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<ProductDto> GetProductById(long id)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public Task<Product> update(long id, ProductDto dto)
+        //{
+        //    throw new NotImplementedException();
+        //}
         //public PagedResultDto<ProductDto> GetListProduct(FilterDto dto, int pageIndex, int pageSize)
         //{
         //    var listProduct = Filter(dto, pageIndex, pageSize);
