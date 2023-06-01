@@ -97,6 +97,8 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
+appsettings.json
+E:\DiLam\FPTES\NetCore_Project_CRUD\NetCore_Project\Models\ExampleDbContext
 
 # Chutzpah Test files
 _Chutzpah*
