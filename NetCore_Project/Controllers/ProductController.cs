@@ -26,9 +26,9 @@ namespace NetCore_Project.Controllers
             return null;
         }
         [HttpGet]
-        public async Task<List<ProductDto>> List(FilterDto dto)
+        public async Task<ProductDto> GetAllProduct()
         {
-            return null;
+            return await _productService.GetAllProduct();
         }
 
         [HttpGet]
@@ -37,10 +37,15 @@ namespace NetCore_Project.Controllers
             return null;
         }
 
+        //[HttpPost]
+        //public async Task<ProductDto> Create(ProductDto dto)
+        //{
+        //    return await _productService.Create(dto);
+        //}
         [HttpPost]
-        public async Task<ProductDto> Create(ProductDto dto)
+        public async Task<ProductDto> CreateProduct(ProductDto dto)
         {
-            return await _productService.Create(dto);
+            return await _productService.CreateProduct(dto);
         }
 
         [HttpPut]

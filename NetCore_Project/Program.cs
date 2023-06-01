@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetCore_Project.Middleware;
 using NetCore_Project.Models;
-using NetCore_Project.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +18,6 @@ builder.Services.RegisterIoCs(builder.Configuration);
 
 //builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
 
 var app = builder.Build();
 

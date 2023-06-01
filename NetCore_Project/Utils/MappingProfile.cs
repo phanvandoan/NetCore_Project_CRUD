@@ -21,8 +21,7 @@ namespace NetCore_Project.Utils
             CreateMap<InvoiceDto, Invoice>().ReverseMap()
                 .ForMember(dest => dest.Id, opt => opt.Ignore());
 
-            CreateMap<Product, ProductDto>().ReverseMap()
-                .ForMember(dest => dest.Id, opt => opt.Ignore());
+            CreateMap<Product, ProductDto>().ReverseMap();
             CreateMap<ProductDto, Product>().ForMember(dest => dest.Id, opt => opt.Ignore());
 
             CreateMap<InvoiceDetail, InvoiceDetailDto>().ReverseMap();
