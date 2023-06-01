@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Nest;
 using NetCore_Project.Middleware;
 using NetCore_Project.Models;
-using NetCore_Project.Utils;
+using NetCore_Project.Repository;
+using NetCore_Project.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 

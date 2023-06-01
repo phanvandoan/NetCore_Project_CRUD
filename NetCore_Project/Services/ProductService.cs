@@ -9,6 +9,8 @@ using NetCore_Project.DTO.Customer;
 using Newtonsoft.Json;
 using NetCore_Project.DTO.PagedResult;
 using System.Drawing.Printing;
+using NetCore_Project.Repository;
+using System.Linq.Expressions;
 
 namespace NetCore_Project.Services
 {
@@ -16,22 +18,16 @@ namespace NetCore_Project.Services
     {
         private readonly ExampleDbContext _context;
         private readonly IMapper _mapper;
-        public ProductService(ExampleDbContext context, IMapper mapper)
+        private readonly IRepository<ProductDto> _productRepository;
+        public ProductService(ExampleDbContext context, IMapper mapper, IRepository<ProductDto> productRepository)
         {
             _context = context;
             _mapper = mapper;
+            _productRepository = productRepository;
         }
         public IQueryable<ProductDto> GetCount()
         {
             return null;
-        }
-
-        public PagedResultDto<ProductDto> GetListProduct(FilterDto dto, int pageIndex, int pageSize)
-        {
-            var listProduct = Filter(dto, pageIndex, pageSize);
-            List<ProductDto> productDtos = _mapper.Map<List<ProductDto>>(listProduct);
-            PagedResultDto<ProductDto> pagedResult = new PagedResultDto<ProductDto>(pageIndex, pageSize, listProduct.Count(), productDtos);
-            return pagedResult;
         }
         public async Task<ProductDto> GetProductById(long id)
         {
@@ -39,6 +35,23 @@ namespace NetCore_Project.Services
             ProductDto productDtos = _mapper.Map<ProductDto>(product);
             return productDtos;
         }
+        public int Count(FilterDto dto)
+        {
+            //int count = _productRepository.Count();
+            //return count;
+
+            return 0;
+        }
+
+        public PagedResultDto<ProductDto> GetListProduct(FilterDto dto, int pageIndex, int pageSize)
+        {
+            //var listProduct = Filter(dto, pageIndex, pageSize);
+            var listProduct = _productRepository.GetAll();
+            List<ProductDto> productDtos = _mapper.Map<List<ProductDto>>(listProduct);
+            PagedResultDto<ProductDto> pagedResult = new PagedResultDto<ProductDto>(pageIndex, pageSize, listProduct.Count(), productDtos);
+            return pagedResult;
+        }
+        
         public async Task<ProductDto> Create(ProductDto dto)
         {
             var productDtos = _mapper.Map<Product>(dto);

@@ -27,4 +27,9 @@
     <Folder Include="Models\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NetCore_Project.Infrastructure\NetCore_Project.Infrastructure.csproj" />
+    <ProjectReference Include="..\NetCore_Project.Service\NetCore_Project.Services.csproj" />
+  </ItemGroup>
+
 </Project>

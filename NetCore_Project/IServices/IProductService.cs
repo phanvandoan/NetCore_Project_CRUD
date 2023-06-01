@@ -2,9 +2,11 @@
 using NetCore_Project.DTO.PagedResult;
 using NetCore_Project.DTO.Products;
 using NetCore_Project.Models;
+using NetCore_Project.Repository;
 
 namespace NetCore_Project.IServices
 {
+    //public interface IProductService : IRepository<ProductDto>
     public interface IProductService
     {
         IQueryable<ProductDto> GetCount();
@@ -13,5 +15,6 @@ namespace NetCore_Project.IServices
         Task<ProductDto> Create(ProductDto dto);
         Task<Product> update(long id, ProductDto dto);
         Task<string> Delete(long id);
+        int Count(FilterDto dto);
     }
 }

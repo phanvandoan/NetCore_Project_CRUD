@@ -2,9 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Nest;
+using NetCore_Project.DTO.Customer;
+using NetCore_Project.DTO.PagedResult;
 using NetCore_Project.DTO.Products;
 using NetCore_Project.IServices;
 using NetCore_Project.Models;
+using NetCore_Project.Services;
 using SmartFormat.Core.Output;
 using System.Text.Json.Nodes;
 
@@ -26,9 +29,10 @@ namespace NetCore_Project.Controllers
             return null;
         }
         [HttpGet]
-        public async Task<List<ProductDto>> List(FilterDto dto)
+        [HttpGet]
+        public PagedResultDto<ProductDto> List([FromQuery] FilterDto dto, int pageIndex, int pageSize)
         {
-            return null;
+            return _productService.GetListProduct(dto, pageIndex, pageSize);
         }
 
         [HttpGet]
@@ -53,6 +57,12 @@ namespace NetCore_Project.Controllers
         public async Task<string> Delete(long id)
         {
             return await _productService.Delete(id);
+        }
+
+        [HttpGet]
+        public int GetCount(FilterDto dto)
+        {
+            return _productService.Count(dto);
         }
     }
 }
