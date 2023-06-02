@@ -10,6 +10,7 @@ namespace NetCore_Project.Repositories
     public interface IUnitOfWork : IDisposable
     {
         IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class;
-        void Save();
+        int Save();
+        IProductRepository Products { get; }
     }
 }

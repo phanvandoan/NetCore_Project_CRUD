@@ -6,11 +6,14 @@ namespace NetCore_Project.Repositories
     {
         private readonly ExampleDbContext _context;
         private Dictionary<Type, object> _repositories;
+        public IProductRepository Products { get; }
 
-        public UnitOfWork(ExampleDbContext context)
+
+        public UnitOfWork(ExampleDbContext context, IProductRepository products)
         {
             _context = context;
             _repositories = new Dictionary<Type, object>();
+            Products = products;
         }
 
         public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class
@@ -27,9 +30,9 @@ namespace NetCore_Project.Repositories
             return (IGenericRepository<TEntity>)_repositories[entityType];
         }
 
-        public void Save()
+        public int Save()
         {
-            _context.SaveChanges();
+           return _context.SaveChanges();
         }
 
         public void Dispose()

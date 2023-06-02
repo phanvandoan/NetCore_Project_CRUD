@@ -3,19 +3,21 @@ using Microsoft.AspNetCore.Mvc;
 using NetCore_Project.DTO.DataDTO;
 using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
+using Newtonsoft.Json.Linq;
 using System.Linq.Expressions;
+using System.Text.Json.Nodes;
 
 namespace NetCore_Project.Services
 {
     public interface IProductService
     {
-        Task<int> CountAll(Expression<Func<ProductFilterDto, bool>> filter = null);
-        //Task<int> CountAll1(Expression<Func<Product, bool>> filter = null);
+        Task<int> Count(Expression<Func<Product, bool>> filter = null);
+        Product Get(long id);
         //PagedResultDto<ProductDto> GetListProduct(ProductFilterDto dto, int pageIndex, int pageSize);
         //Task<ProductDto> GetProductById(long id);
-        ////Task<ProductDto> Create(ProductDto dto);
-        //Task<ProductDto> CreateProduct(ProductDto product);
-        //Task<Product> update(long id, ProductDto dto);
-        //Task<string> Delete(long id);
+        Task<Product> Create(Product dto);
+        //Task<ProductDto> update(long id, ProductDto dto);
+        Task<Product> Update(long id, ProductDto dto);
+        Task<string> Delete(long id);
     }
 }

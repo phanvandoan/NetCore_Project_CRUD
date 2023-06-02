@@ -28,6 +28,9 @@ namespace NetCore_Project.Utils
 
             CreateMap<ProductFilterDto, Expression<Func<Product, bool>>>().ReverseMap();
             CreateMap<Expression<Func<ProductDto, bool>>, Expression<Func<Product, bool>>>().ReverseMap();
+
+            CreateMap<ProductFilterDto, Product>();
+
         }
     }
 }

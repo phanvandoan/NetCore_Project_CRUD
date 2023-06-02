@@ -27,13 +27,14 @@ namespace NetCore_Project.Repositories
         {
             return _dbSet.ToList();
         }
-        public TEntity Get(int id)
+        public TEntity Get(long id)
         {
-            return _dbSet.Find(id);
+            return _dbSet.Find(id)!;
         }
-        public void Create(TEntity entity)
+        public async Task<TEntity> Create(TEntity entity)
         {
             _dbSet.Add(entity);
+            return entity;
         }
 
         public void Update(TEntity entity)
@@ -57,39 +58,39 @@ namespace NetCore_Project.Repositories
 
             return query.Count();
         }
-        //public IEnumerable<TEntity> DynamicFind(Expression<Func<TEntity, bool>> filter)
-        //{
-        //    return _dbSet.Where(filter);
-        //}
+        public IEnumerable<TEntity> DynamicFind(Expression<Func<TEntity, bool>> filter)
+        {
+            return _dbSet.Where(filter);
+        }
 
-        //public IEnumerable<TEntity> OrFilter(params Expression<Func<TEntity, bool>>[] filters)
-        //{
-        //    if (filters.Length == 0)
-        //        return Enumerable.Empty<TEntity>();
+        public IEnumerable<TEntity> OrFilter(params Expression<Func<TEntity, bool>>[] filters)
+        {
+            if (filters.Length == 0)
+                return Enumerable.Empty<TEntity>();
 
-        //    var combinedFilter = filters[0];
-        //    for (int i = 1; i < filters.Length; i++)
-        //    {
-        //        combinedFilter = Expression.Lambda<Func<TEntity, bool>>(
-        //            Expression.OrElse(combinedFilter.Body, filters[i].Body),
-        //            combinedFilter.Parameters);
-        //    }
+            var combinedFilter = filters[0];
+            for (int i = 1; i < filters.Length; i++)
+            {
+                combinedFilter = Expression.Lambda<Func<TEntity, bool>>(
+                    Expression.OrElse(combinedFilter.Body, filters[i].Body),
+                    combinedFilter.Parameters);
+            }
 
-        //    var filterExpression = Expression.Lambda<Func<TEntity, bool>>(combinedFilter, filters[0].Parameters);
-        //    return _dbSet.Where(filterExpression);
-        //}
+            var filterExpression = Expression.Lambda<Func<TEntity, bool>>(combinedFilter, filters[0].Parameters);
+            return _dbSet.Where(filterExpression);
+        }
 
-        //public IEnumerable<TEntity> DynamicOrder(string property, bool isAscending)
-        //{
-        //    var entityType = typeof(TEntity);
-        //    var parameter = Expression.Parameter(entityType, "x");
-        //    var propertyExpression = Expression.Property(parameter, property);
-        //    var lambdaExpression = Expression.Lambda<Func<TEntity, dynamic>>(propertyExpression, parameter);
+        public IEnumerable<TEntity> DynamicOrder(string property, bool isAscending)
+        {
+            var entityType = typeof(TEntity);
+            var parameter = Expression.Parameter(entityType, "x");
+            var propertyExpression = Expression.Property(parameter, property);
+            var lambdaExpression = Expression.Lambda<Func<TEntity, dynamic>>(propertyExpression, parameter);
 
-        //    return isAscending
-        //        ? _dbSet.OrderBy(lambdaExpression)
-        //        : _dbSet.OrderByDescending(lambdaExpression);
-        //}
+            return isAscending
+                ? _dbSet.OrderBy(lambdaExpression)
+                : _dbSet.OrderByDescending(lambdaExpression);
+        }
     }
 
 }
