@@ -7,13 +7,21 @@ namespace NetCore_Project.Repositories
         private readonly ExampleDbContext _context;
         private Dictionary<Type, object> _repositories;
         public IProductRepository Products { get; }
+        public ICustomerRepository Customers { get; }
+        public IInvoiceRepository Invoices { get; }
 
 
-        public UnitOfWork(ExampleDbContext context, IProductRepository products)
+        public UnitOfWork(ExampleDbContext context,
+            IProductRepository products,
+            ICustomerRepository customer,
+            IInvoiceRepository invoice
+            )
         {
             _context = context;
             _repositories = new Dictionary<Type, object>();
             Products = products;
+            Customers = customer;
+            Invoices = invoice;
         }
 
         public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class
@@ -32,7 +40,7 @@ namespace NetCore_Project.Repositories
 
         public int Save()
         {
-           return _context.SaveChanges();
+            return _context.SaveChanges();
         }
 
         public void Dispose()

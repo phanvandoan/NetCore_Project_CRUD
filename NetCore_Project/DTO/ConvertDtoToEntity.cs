@@ -1,5 +1,7 @@
-﻿using NetCore_Project.DTO.DataDTO;
+﻿using AutoMapper;
+using NetCore_Project.DTO.DataDTO;
 using NetCore_Project.Models;
+using System.Linq.Expressions;
 
 namespace NetCore_Project.DTO
 {
@@ -31,6 +33,31 @@ namespace NetCore_Project.DTO
             }
 
             return target;
+        }
+
+        /// <summary>
+        /// Hàm chuyển đổi từ List<> thành entity:
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        public static List<TTarget> ConvertListDtoToListEntity<TSource, TTarget>(List<TSource> sourceList)
+        {
+            var entityList = new List<TTarget>();
+
+            foreach (var source in sourceList)
+            {
+                var entity = ConvertToEntityList<TSource, TTarget>(source);
+                entityList.Add(entity);
+            }
+
+            return entityList;
+        }
+        public static TTarget ConvertToEntityList<TSource, TTarget>(TSource source)
+        {
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<TSource, TTarget>()).CreateMapper();
+            var entity = mapper.Map<TTarget>(source);
+
+            return entity;
         }
 
         /// <summary>

@@ -2,122 +2,85 @@
 using NetCore_Project.DTO.DataDTO;
 using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
+using NetCore_Project.Repositories;
+using System.Linq.Expressions;
 
 namespace NetCore_Project.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly ExampleDbContext _context;
-        private readonly IMapper _mapper;
-        public CustomerService(ExampleDbContext context, IMapper mapper)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public CustomerService(IUnitOfWork unitOfWork)
         {
-            _context = context;
-            _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
-        public PagedResultDto<CustomerDto> GetListCustomer(CustomerFilterDto dto, int pageIndex, int pageSize)
+        public async Task<int> Count(Expression<Func<Customer, bool>> filter)
         {
-            var listCustomer = Filter(dto, pageIndex, pageSize);
-            List<CustomerDto> customerDtos = _mapper.Map<List<CustomerDto>>(listCustomer);
-            PagedResultDto<CustomerDto> pagedResult = new PagedResultDto<CustomerDto>(pageIndex, pageSize, listCustomer.Count(), customerDtos);
-            return pagedResult;
+            var count = _unitOfWork.Customers.DynamicFind(filter);
+            return count.Count();
         }
 
-        public async Task<CustomerDto> GetCustomerById(long id)
+        public Customer Get(long id)
         {
-            try
+            if (id != null)
             {
-                var customer = await _context.Customers.FindAsync(id);
-                CustomerDto customerDtos = _mapper.Map<CustomerDto>(customer);
-                return customerDtos;
+                var customers = _unitOfWork.Customers.Get(id);
+                return customers;
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return null;
         }
 
-        public async Task<CustomerDto> Create(CustomerDto dto)
+
+        public async Task<Customer> Create(Customer dto)
         {
-            try
-            {
-                var customerDtos = _mapper.Map<Customer>(dto);
-                await _context.Customers.AddAsync(customerDtos);
-                await _context.SaveChangesAsync();
-                return _mapper.Map<CustomerDto>(dto);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            var rs = await _unitOfWork.Customers.Create(dto);
+            var result = _unitOfWork.Save();
+            return rs;
 
         }
 
-        public async Task<Customer> update(long id, CustomerDto dto)
+        public async Task<Customer> Update(long id, CustomerDto dto)
         {
-            try
+            var customer = _unitOfWork.Customers.Get(id);
+            if (customer != null)
             {
-                Customer customer = await _context.Customers.FindAsync(id);
-                if (customer == null)
-                {
-                    return null;
+                customer.StatusId = dto.StatusId;
+                customer.RowId = dto.RowId;
+                customer.Used = dto.Used;
+                customer.UpdatedAt = dto.UpdatedAt;
+                customer.CustomerNo = dto.CustomerNo;
+                customer.CustomerFirstName = dto.CustomerFirstName;
+                customer.CustomerLastName = dto.CustomerLastName;
+                customer.CustomerCompany = dto.CustomerCompany;
+                customer.CustomerAddress = dto.CustomerAddress;
+                customer.CustomerDistrict = dto.CustomerDistrict;
+                customer.CustomerCity = dto.CustomerCity;
+                customer.CustomerAccountNo = dto.CustomerAccountNo;
+                customer.CustomerTaxNo = dto.CustomerTaxNo;
 
-                }
-                var customerDtos = _mapper.Map(dto, customer);
-                await _context.SaveChangesAsync();
-                return customerDtos;
+                _unitOfWork.Customers.Update(customer);
+                _unitOfWork.Save();
+                return customer;
             }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-
+            return null;
         }
 
         public async Task<string> Delete(long id)
         {
-            var customer = await _context.Customers.FindAsync(id);
-            try
+            string message = null;
+            if (id != 0)
             {
+                var customer = _unitOfWork.Customers.Get(id);
                 if (customer != null)
                 {
-                    _context.Remove(customer);
-                    _context.SaveChanges();
+                    _unitOfWork.Customers.Delete(customer);
+                    var result = _unitOfWork.Save();
+                    message = "Deleted success!";
+                    return message;
                 }
-                return "Deleted Success!";
             }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-
-        }
-
-        private List<Customer> Filter(CustomerFilterDto dto, int pageIndex, int pageSize)
-        {
-            var query = _context.Customers.AsQueryable();
-            if (dto.Id.HasValue)
-            {
-                query = query.Where(entity => entity.Id == dto.Id);
-            }
-            if (!string.IsNullOrWhiteSpace(dto.CustomerNo))
-            {
-                query = query.Where(entity => entity.CustomerNo == dto.CustomerNo);
-            }
-            if (!string.IsNullOrWhiteSpace(dto.CustomerTaxNo))
-            {
-                query = query.Where(entity => entity.CustomerTaxNo == dto.CustomerTaxNo);
-            }
-            if (dto.StatusId.HasValue)
-            {
-                query = query.Where(entity => entity.StatusId == dto.StatusId);
-            }
-            if (pageIndex >= 1)
-            {
-                query = query.Skip((pageIndex - 1) * pageSize).Take(pageSize);
-            }
-            var entities = query.ToList();
-            return entities;
+            return message;
         }
 
     }

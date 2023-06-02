@@ -1,15 +1,19 @@
 ﻿using NetCore_Project.DTO.DataDTO;
 using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
+using System.Linq.Expressions;
 
 namespace NetCore_Project.Services
 {
     public interface ICustomerService
     {
-        PagedResultDto<CustomerDto> GetListCustomer(CustomerFilterDto dto, int pageIndex, int pageSize);
-        Task<CustomerDto> GetCustomerById(long id);
-        Task<CustomerDto> Create(CustomerDto dto);
-        Task<Customer> update(long id, CustomerDto dto);
+        Task<int> Count(Expression<Func<Customer, bool>> filter = null);
+        Customer Get(long id);
+        //PagedResultDto<ProductDto> GetListProduct(ProductFilterDto dto, int pageIndex, int pageSize);
+        //Task<ProductDto> GetProductById(long id);
+        Task<Customer> Create(Customer dto);
+        //Task<ProductDto> update(long id, ProductDto dto);
+        Task<Customer> Update(long id, CustomerDto dto);
         Task<string> Delete(long id);
     }
 }

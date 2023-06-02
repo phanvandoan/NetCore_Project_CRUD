@@ -12,5 +12,7 @@ namespace NetCore_Project.Repositories
         IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class;
         int Save();
         IProductRepository Products { get; }
+        ICustomerRepository Customers { get; }
+        IInvoiceRepository Invoices { get; }
     }
 }

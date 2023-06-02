@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NetCore_Project.DTO;
 using NetCore_Project.DTO.DataDTO;
 using NetCore_Project.DTO.FilterDTO;
+using NetCore_Project.Models;
 using NetCore_Project.Services;
 
 namespace NetCore_Project.Controllers
@@ -10,6 +12,21 @@ namespace NetCore_Project.Controllers
     [ApiController]
     public class InvoiceController : ControllerBase
     {
+        private readonly IInvoiceService _invoiceService;
+        public InvoiceController(IInvoiceService invoiceService)
+        {
+            _invoiceService = invoiceService;
+        }
+
+        [HttpPost]
+        public async Task<InvoiceDto> Create(InvoiceDto dto)
+        {
+            var master = ConvertDtoToEntity.ConvertToEntity<InvoiceDto, Invoice>(dto);
+            var detail = ConvertDtoToEntity.ConvertListDtoToListEntity<InvoiceDetailDto, InvoiceDetail>(dto.InvoiceDetails.ToList());
+            var rsInvoice = await _invoiceService.Create(master, detail);
+            var invoiceDto = ConvertDtoToEntity.ConvertToDto<Invoice, InvoiceDto>(rsInvoice);
+            return invoiceDto;
+        }
         //private IInvoiceService _invoiceService;
         //public InvoiceController(IInvoiceService invoiceService)
         //{

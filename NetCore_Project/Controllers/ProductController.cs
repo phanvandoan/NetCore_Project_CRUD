@@ -1,16 +1,11 @@
 ﻿using AutoMapper;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc;
-using Nest;
 using NetCore_Project.DTO;
 using NetCore_Project.DTO.DataDTO;
 using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
 using NetCore_Project.Services;
-using Newtonsoft.Json.Linq;
 using System.Linq.Expressions;
-using System.Text.Json.Nodes;
-using TrueSight.Common;
 
 namespace NetCore_Project.Controllers
 {
@@ -19,18 +14,14 @@ namespace NetCore_Project.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly IMapper _mapper;
-        public ProductController(IProductService productService, IMapper mapper)
+        public ProductController(IProductService productService)
         {
             _productService = productService;
-            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<int> Count([FromQuery] ProductFilterDto filterDto)
         {
-            var productEntity = ConvertDtoToEntity.ConvertToEntity<ProductFilterDto, Product>(filterDto);
-            var count = await _productService.Count(productEntity);
             return 0;
         }
 
