@@ -1,4 +1,4 @@
-﻿namespace NetCore_Project.DTO.Invoice.InvoiceDetails
+﻿namespace NetCore_Project.DTO.FilterDTO
 {
     public class InvoiceDetailFilterDto
     {

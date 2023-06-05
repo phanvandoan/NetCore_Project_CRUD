@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Nest;
-using NetCore_Project.DTO.Products;
-using NetCore_Project.IServices;
+using NetCore_Project.DTO;
+using NetCore_Project.DTO.DataDTO;
+using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
-using SmartFormat.Core.Output;
-using System.Text.Json.Nodes;
+using NetCore_Project.Services;
+using System.Linq.Expressions;
 
 namespace NetCore_Project.Controllers
 {
@@ -14,50 +13,47 @@ namespace NetCore_Project.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private IProductService _productService;
+        private readonly IProductService _productService;
         public ProductController(IProductService productService)
         {
             _productService = productService;
         }
 
         [HttpGet]
-        public IActionResult Count()
+        public async Task<int> Count([FromQuery] ProductFilterDto filterDto)
         {
-            return null;
-        }
-        [HttpGet]
-        public async Task<ProductDto> GetAllProduct()
-        {
-            return await _productService.GetAllProduct();
+            return 0;
         }
 
         [HttpGet]
-        public IQueryable<ProductDto> Get(long id)
+        public ProductDto Get(long id)
         {
-            return null;
+            var product = _productService.Get(id);
+            var productDto = ConvertDtoToEntity.ConvertToDto<Product, ProductDto>(product);
+            return productDto;
         }
 
-        //[HttpPost]
-        //public async Task<ProductDto> Create(ProductDto dto)
-        //{
-        //    return await _productService.Create(dto);
-        //}
         [HttpPost]
-        public async Task<ProductDto> CreateProduct(ProductDto dto)
+        public async Task<ProductDto> Create(ProductDto dto)
         {
-            return await _productService.CreateProduct(dto);
+            var productEntity = ConvertDtoToEntity.ConvertToEntity<ProductDto, Product>(dto);
+            var rsProduct = await _productService.Create(productEntity);
+            var productDto = ConvertDtoToEntity.ConvertToDto<Product, ProductDto>(rsProduct);
+            return productDto;
         }
-
         [HttpPut]
-        public async Task<Product> Update(long id, ProductDto dto)
+        public async Task<ProductDto> Update(long id ,ProductDto dto)
         {
-            return await _productService.update(id, dto);
-        }
+            var rs = await _productService.Update(id, dto);
+            var productDto = ConvertDtoToEntity.ConvertToDto<Product, ProductDto>(rs);
 
+            return productDto;
+        }
         [HttpDelete]
         public async Task<string> Delete(long id)
         {
-            return await _productService.Delete(id);
+            var rs = await _productService.Delete(id);
+            return rs;
         }
     }
 }

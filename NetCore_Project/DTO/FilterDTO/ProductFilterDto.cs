@@ -1,8 +1,7 @@
-﻿namespace NetCore_Project.DTO.Products
+﻿namespace NetCore_Project.DTO.FilterDTO
 {
-    public class FilterDto
+    public class ProductFilterDto
     {
-        public long? Id { get; set; }
         public string? ProductNo { get; set; }
         public string? ProductName { get; set; }
         public string? Unit { get; set; }

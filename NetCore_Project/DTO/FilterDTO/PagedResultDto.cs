@@ -1,4 +1,4 @@
-﻿namespace NetCore_Project.DTO.PagedResult
+﻿namespace NetCore_Project.DTO.FilterDTO
 {
     public class PagedResultDto<T>
     {

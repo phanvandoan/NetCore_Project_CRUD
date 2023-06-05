@@ -26,7 +26,7 @@ namespace NetCore_Project.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=DOANPV\\SQLEXPRESS;Initial Catalog=ExampleDb;Integrated Security=True");
+                optionsBuilder.UseSqlServer("Data Source=FISES-DOANPV9\\SQLEXPRESS;Initial Catalog=ExampleDb;Integrated Security=True");
             }
         }
 
@@ -78,11 +78,6 @@ namespace NetCore_Project.Models
                 entity.Property(e => e.Vat)
                     .HasMaxLength(250)
                     .HasColumnName("VAT");
-
-                entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.Invoices)
-                    .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK__Invoice__Custome__3C69FB99");
             });
 
             modelBuilder.Entity<InvoiceDetail>(entity =>
@@ -100,11 +95,6 @@ namespace NetCore_Project.Models
                 entity.Property(e => e.UnitPrice).HasColumnType("decimal(20, 4)");
 
                 entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.InvoiceDetails)
-                    .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("FK__InvoiceDe__Produ__3D5E1FD2");
             });
 
             modelBuilder.Entity<Product>(entity =>

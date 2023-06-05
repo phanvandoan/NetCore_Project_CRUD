@@ -5,11 +5,6 @@ namespace NetCore_Project.Models
 {
     public partial class Product
     {
-        public Product()
-        {
-            InvoiceDetails = new HashSet<InvoiceDetail>();
-        }
-
         public long Id { get; set; }
         public long? StatusId { get; set; }
         public Guid? RowId { get; set; }
@@ -20,7 +15,5 @@ namespace NetCore_Project.Models
         public string? ProductNo { get; set; }
         public string? ProductName { get; set; }
         public string? Unit { get; set; }
-
-        public virtual ICollection<InvoiceDetail> InvoiceDetails { get; set; }
     }
 }
