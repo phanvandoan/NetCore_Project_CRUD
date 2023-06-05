@@ -4,8 +4,8 @@ namespace NetCore_Project.Repositories
 {
     public interface IInvoiceDetailRepository : IGenericRepository<InvoiceDetail>
     {
-        InvoiceDetail GetByGuidId(Guid id);
-        //List<InvoiceDetail> GetListByIdsAsync(Guid ids);
-        Task<IEnumerable<InvoiceDetail>> GetEntitiesToDelete(Guid ids);
+        //InvoiceDetail GetByGuidId(Guid id);
+        Task<List<InvoiceDetail>> GetListByIdsAsync(Guid ids);
+        void DeleteMany(IEnumerable<long> ids);
     }
 }

@@ -1,4 +1,5 @@
-﻿using NetCore_Project.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using NetCore_Project.Models;
 
 namespace NetCore_Project.Repositories
 {
@@ -39,6 +40,23 @@ namespace NetCore_Project.Repositories
             }
 
             return (IGenericRepository<TEntity>)_repositories[entityType];
+        }
+        public void Rollback()
+        {
+            // Khôi phục trạng thái gốc của các đối tượng đã thay đổi
+            foreach (var entry in _context.ChangeTracker.Entries())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.State = EntityState.Detached;
+                        break;
+                    case EntityState.Modified:
+                    case EntityState.Deleted:
+                        entry.Reload();
+                        break;
+                }
+            }
         }
 
         public int Save()

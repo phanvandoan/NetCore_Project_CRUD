@@ -13,7 +13,7 @@ namespace NetCore_Project.Repositories
         Task<List<TEntity>> CreateMany(IEnumerable<TEntity> entities);
         void Update(TEntity entity);
         void Delete(TEntity entity);
-        Task DeleteMany(IEnumerable<TEntity> entities);
+        //Task DeleteMany(IEnumerable<TEntity> entities);
 
         int CountAll(Expression<Func<TEntity, bool>> filter = null);
         IEnumerable<TEntity> DynamicFind(Expression<Func<TEntity, bool>> filter);

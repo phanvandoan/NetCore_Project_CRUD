@@ -14,23 +14,22 @@ namespace NetCore_Project.Repositories
         public InvoiceDetailRepository(ExampleDbContext dbContext) : base(dbContext)
         {
         }
-        public InvoiceDetail GetByGuidId(Guid id)
-        {
-            //return _dbSet.Find(id)!;
-            return _dbSet.FirstOrDefault(e => e.MasterId == id)!;
-
-        }
-
-        //public async List<InvoiceDetail> GetListByIdsAsync(Guid ids)
+        //public InvoiceDetail GetByGuidId(Guid id)
         //{
-        //    //var invoiceDetail = await _dbSet.Where(x => x.MasterId == ids).ToListAsync();
-        //    //return invoiceDetail;
-        //    return null;
+        //    return _dbSet.FirstOrDefault(e => e.MasterId == id)!;
+
         //}
 
-        public async Task<IEnumerable<InvoiceDetail>> GetEntitiesToDelete(Guid ids)
+        public async Task<List<InvoiceDetail>> GetListByIdsAsync(Guid ids)
         {
-            return await _dbSet.Where(e => e.MasterId == ids).ToListAsync();
+            var invoiceDetail = await _dbSet.Where(x => x.MasterId == ids).ToListAsync();
+            return invoiceDetail;
         }
+        public void DeleteMany(IEnumerable<long> ids)
+        {
+            var entitiesToDelete = _context.Set<InvoiceDetail>().Where(e => ids.Contains(e.Id));
+            _context.Set<InvoiceDetail>().RemoveRange(entitiesToDelete);
+        }
+
     }
 }

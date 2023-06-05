@@ -8,7 +8,7 @@ namespace NetCore_Project.Repositories
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
-        private readonly DbContext _context;
+        public readonly DbContext _context;
         public readonly DbSet<TEntity> _dbSet;
 
         public GenericRepository(DbContext context)
@@ -39,7 +39,7 @@ namespace NetCore_Project.Repositories
         //}
         public async Task<TEntity> Create(TEntity entity)
         {
-            _dbSet.Add(entity);
+             _dbSet.Add(entity);
             return entity;
         }
 
@@ -59,11 +59,11 @@ namespace NetCore_Project.Repositories
             _dbSet.Remove(entity);
         }
 
-        public async Task DeleteMany(IEnumerable<TEntity> entities)
-        {
-            _dbSet.RemoveRange(entities);
-            await _context.SaveChangesAsync();
-        }
+        //public async Task DeleteMany(IEnumerable<TEntity> entities)
+        //{
+        //    _dbSet.RemoveRange(entities);
+        //    await _context.SaveChangesAsync();
+        //}
 
         public int CountAll(Expression<Func<TEntity, bool>> filter = null)
         {

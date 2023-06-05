@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 using NetCore_Project.Middleware;
 using NetCore_Project.Models;
 
@@ -18,6 +19,9 @@ builder.Services.RegisterIoCs(builder.Configuration);
 
 //builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+//builder.Services.AddControllers().AddFluentValidation();
+
+builder.Services.AddControllers().AddFluentValidation();
 
 var app = builder.Build();
 

@@ -34,20 +34,28 @@ namespace NetCore_Project.Controllers
         }
 
         [HttpPost]
-        public async Task<ProductDto> Create(ProductDto dto)
+        public async Task<IActionResult> Create(ProductDto dto)
         {
             var productEntity = ConvertDtoToEntity.ConvertToEntity<ProductDto, Product>(dto);
-            var rsProduct = await _productService.Create(productEntity);
-            var productDto = ConvertDtoToEntity.ConvertToDto<Product, ProductDto>(rsProduct);
-            return productDto;
+            var (rsProduct, errors) = await _productService.Create(productEntity);
+            if (errors != null)
+            {
+                return BadRequest(errors);
+            }
+
+            return Ok(rsProduct);
         }
         [HttpPut]
-        public async Task<ProductDto> Update(long id ,ProductDto dto)
+        public async Task<IActionResult> Update(long id ,ProductDto dto)
         {
-            var rs = await _productService.Update(id, dto);
-            var productDto = ConvertDtoToEntity.ConvertToDto<Product, ProductDto>(rs);
+            var productEntity = ConvertDtoToEntity.ConvertToEntity<ProductDto, Product>(dto);
+            var (rs, errors) = await _productService.Update(id, productEntity);
 
-            return productDto;
+            if (errors != null)
+            {
+                return BadRequest(errors);
+            }
+            return Ok(rs);
         }
         [HttpDelete]
         public async Task<string> Delete(long id)

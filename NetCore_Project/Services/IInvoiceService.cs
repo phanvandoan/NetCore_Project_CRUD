@@ -7,10 +7,10 @@ namespace NetCore_Project.Services
 {
     public interface IInvoiceService
     {
-        Task<int> Count(Expression<Func<Invoice, bool>> filter = null);
-        Invoice Get(long id);
-        Task<CreateUpdateInvoiceDto> Create(CreateUpdateInvoiceDto masterModel, List<InvoiceDetail> detailModel);
-        Task<CreateUpdateInvoiceDto> Update(CreateUpdateInvoiceDto dto, long id);
-        //Task<string> Delete(long id);
+        Task<int> Count();
+        Task<CreateUpdateInvoiceDto> Get(long id);
+        Task<(CreateUpdateInvoiceDto, Dictionary<string, string>)> Create(CreateUpdateInvoiceDto masterModel, List<InvoiceDetail> detailModel);
+        Task<(CreateUpdateInvoiceDto, Dictionary<string, string>)> Update(CreateUpdateInvoiceDto dto, long id);
+        Task<string> Delete(long id);
     }
 }
