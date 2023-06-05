@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using NetCore_Project.DTO.DataDTO;
 using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
 using NetCore_Project.Repositories;
+using NetCore_Project.Services.Valid;
+using StackExchange.Redis;
 using System.Linq.Expressions;
 
 namespace NetCore_Project.Services
@@ -10,9 +14,12 @@ namespace NetCore_Project.Services
     public class CustomerService : ICustomerService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IValidator<Customer> _validator;
 
-        public CustomerService(IUnitOfWork unitOfWork)
+        public CustomerService(IUnitOfWork unitOfWork, IValidator<Customer> validator
+            )
         {
+            _validator = validator;
             _unitOfWork = unitOfWork;
         }
         public async Task<int> Count(Expression<Func<Customer, bool>> filter)
@@ -32,38 +39,67 @@ namespace NetCore_Project.Services
         }
 
 
-        public async Task<Customer> Create(Customer dto)
+        public async Task<(Customer, Dictionary<string, string>)> Create(Customer dto)
         {
-            var rs = await _unitOfWork.Customers.Create(dto);
-            var result = _unitOfWork.Save();
-            return rs;
-
+            try
+            {
+                var validationResult = _validator.Validate(dto);
+                if (!validationResult.IsValid)
+                {
+                    var errors = validationResult.Errors.ToDictionary(error => error.ErrorCode, error => error.ErrorMessage);
+                    return (null, errors);
+                }
+                var rs = await _unitOfWork.Customers.Create(dto);
+                var result = _unitOfWork.Save();
+                return (dto, null);
+            }
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                throw ex;
+            }
         }
 
-        public async Task<Customer> Update(long id, CustomerDto dto)
+        public async Task<(Customer, Dictionary<string, string>)> Update(long id, Customer dto)
         {
-            var customer = _unitOfWork.Customers.Get(id);
-            if (customer != null)
+            try
             {
-                customer.StatusId = dto.StatusId;
-                customer.RowId = dto.RowId;
-                customer.Used = dto.Used;
-                customer.UpdatedAt = dto.UpdatedAt;
-                customer.CustomerNo = dto.CustomerNo;
-                customer.CustomerFirstName = dto.CustomerFirstName;
-                customer.CustomerLastName = dto.CustomerLastName;
-                customer.CustomerCompany = dto.CustomerCompany;
-                customer.CustomerAddress = dto.CustomerAddress;
-                customer.CustomerDistrict = dto.CustomerDistrict;
-                customer.CustomerCity = dto.CustomerCity;
-                customer.CustomerAccountNo = dto.CustomerAccountNo;
-                customer.CustomerTaxNo = dto.CustomerTaxNo;
+                var customer = _unitOfWork.Customers.Get(id);
+                var validationResult = _validator.Validate(dto);
+                if (!validationResult.IsValid)
+                {
+                    var errors = validationResult.Errors.ToDictionary(error => error.ErrorCode, error => error.ErrorMessage);
+                    return (null, errors);
+                }
 
-                _unitOfWork.Customers.Update(customer);
-                _unitOfWork.Save();
-                return customer;
+                if (customer != null)
+                {
+                    customer.StatusId = dto.StatusId;
+                    customer.RowId = dto.RowId;
+                    customer.Used = dto.Used;
+                    customer.UpdatedAt = dto.UpdatedAt;
+                    customer.CustomerNo = dto.CustomerNo;
+                    customer.CustomerFirstName = dto.CustomerFirstName;
+                    customer.CustomerLastName = dto.CustomerLastName;
+                    customer.CustomerCompany = dto.CustomerCompany;
+                    customer.CustomerAddress = dto.CustomerAddress;
+                    customer.CustomerDistrict = dto.CustomerDistrict;
+                    customer.CustomerCity = dto.CustomerCity;
+                    customer.CustomerAccountNo = dto.CustomerAccountNo;
+                    customer.CustomerTaxNo = dto.CustomerTaxNo;
+
+                    _unitOfWork.Customers.Update(customer);
+                    _unitOfWork.Save();
+                    return (dto, null);
+                }
+                return (dto, null);
             }
-            return null;
+            catch (Exception ex)
+            {
+                _unitOfWork.Rollback();
+                throw ex;
+            }
+            
         }
 
         public async Task<string> Delete(long id)

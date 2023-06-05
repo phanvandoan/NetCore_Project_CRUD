@@ -1,7 +1,10 @@
-﻿using Nest;
+﻿using FluentValidation;
+using Nest;
+using NetCore_Project.DTO.DataDTO;
 using NetCore_Project.Models;
 using NetCore_Project.Repositories;
 using NetCore_Project.Services;
+using NetCore_Project.Services.Valid;
 
 namespace NetCore_Project.Middleware
 {
@@ -22,6 +25,11 @@ namespace NetCore_Project.Middleware
             services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+            services.AddTransient<IValidator<Customer>, CustomerFieldValidator>();
+            services.AddTransient<IValidator<Product>, ProductFieldValidator>();
+            services.AddTransient<IValidator<CreateUpdateInvoiceDto>, InvoiceFieldValidator>();
+
 
         }
     }

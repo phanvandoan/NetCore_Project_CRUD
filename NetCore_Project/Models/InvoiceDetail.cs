@@ -13,7 +13,7 @@ namespace NetCore_Project.Models
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
         public string? InvoiceDetailsNo { get; set; }
-        public Guid? MasterId { get; set; }
+        public Guid MasterId { get; set; }
         public string? SequenceNo { get; set; }
         public decimal? Quantity { get; set; }
         public decimal? UnitPrice { get; set; }

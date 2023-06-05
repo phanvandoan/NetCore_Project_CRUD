@@ -13,11 +13,8 @@ namespace NetCore_Project.Services
     {
         Task<int> Count(Expression<Func<Product, bool>> filter = null);
         Product Get(long id);
-        //PagedResultDto<ProductDto> GetListProduct(ProductFilterDto dto, int pageIndex, int pageSize);
-        //Task<ProductDto> GetProductById(long id);
-        Task<Product> Create(Product dto);
-        //Task<ProductDto> update(long id, ProductDto dto);
-        Task<Product> Update(long id, ProductDto dto);
+        Task<(Product, Dictionary<string, string>)> Create(Product dto);
+        Task<(Product, Dictionary<string, string>)> Update(long id, Product dto);
         Task<string> Delete(long id);
     }
 }
