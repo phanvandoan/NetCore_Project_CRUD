@@ -7,6 +7,7 @@ using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
 using NetCore_Project.Repositories;
 using Newtonsoft.Json;
+using NuGet.Protocol.Core.Types;
 using System.Linq.Expressions;
 using static StackExchange.Redis.Role;
 
@@ -15,9 +16,11 @@ namespace NetCore_Project.Services
     public class InvoiceService : IInvoiceService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public InvoiceService(IUnitOfWork unitOfWork)
+        private IInvoiceDetailRepository _invoiceDetailRepository;
+        public InvoiceService(IUnitOfWork unitOfWork, IInvoiceDetailRepository invoiceDetailRepository)
         {
             _unitOfWork = unitOfWork;
+            _invoiceDetailRepository = invoiceDetailRepository;
         }
         public Task<int> Count(Expression<Func<Invoice, bool>> filter = null)
         {
@@ -43,17 +46,19 @@ namespace NetCore_Project.Services
         }
 
 
-        public async Task<Invoice> Update(CreateUpdateInvoiceDto dto, long id)
+        public async Task<CreateUpdateInvoiceDto> Update(CreateUpdateInvoiceDto dto, long id)
         {
             var invoice = Get(id);
             if (invoice != null)
             {
                 var master = await UpdateInvoice(invoice, dto);
                 await DeleteInvoiceDetail(invoice.MasterId);
-                var details = await CreateInvoiceDetail(dto.InvoiceDetails, dto.MasterId);
+                var details = await CreateInvoiceDetail(dto.InvoiceDetails, master.MasterId);
+                var result = _unitOfWork.Save();
+                return master;
             }
+            return null;
 
-            return invoice;
         }
 
         public Invoice Get(long id)
@@ -68,15 +73,18 @@ namespace NetCore_Project.Services
 
         private async Task<CreateUpdateInvoiceDto> UpdateInvoice(Invoice invoice, CreateUpdateInvoiceDto dto)
         {
-            invoice.StatusId = dto.StatusId;
-            invoice.RowId = dto.RowId;
-            invoice.Used = dto.Used;
-            invoice.UpdatedAt = dto.UpdatedAt;
-            invoice.InvoiceNo = dto.InvoiceNo;
-            invoice.MasterId = dto.MasterId;
-            invoice.InvoiceDate = dto.InvoiceDate;
-            invoice.PaymentMethod = dto.PaymentMethod;
-            invoice.Vat = dto.Vat;
+            if (invoice != null)
+            {
+                invoice.StatusId = dto.StatusId;
+                invoice.Used = dto.Used;
+                invoice.UpdatedAt = dto.UpdatedAt;
+                invoice.InvoiceNo = dto.InvoiceNo;
+                invoice.InvoiceDate = dto.InvoiceDate;
+                invoice.PaymentMethod = dto.PaymentMethod;
+                invoice.Vat = dto.Vat;
+                _unitOfWork.Invoices.Update(invoice);
+
+            };
 
             var cuInvoiceDto = new CreateUpdateInvoiceDto()
             {
@@ -160,7 +168,6 @@ namespace NetCore_Project.Services
                 }
                 var rs = await _unitOfWork.InvoiceDetails.CreateMany(listInvoiceDetail);
                 return rs;
-
             }
             catch (Exception ex)
             {
@@ -174,7 +181,7 @@ namespace NetCore_Project.Services
             //string message = null;
             //if (masterId != null)
             //{
-            //    var invoiceDetail = _unitOfWork.InvoiceDetails.GetGuidId(masterId);
+            //    var invoiceDetail = _invoiceDetailRepository.GetByGuidId(masterId);
             //    if (invoiceDetail != null)
             //    {
             //        _unitOfWork.InvoiceDetails.Delete(invoiceDetail);
@@ -184,6 +191,13 @@ namespace NetCore_Project.Services
             //    }
             //}
             //return message;
+
+            //var entitiesToDelete = await _repository.GetEntitiesToDelete();
+            //await _repository.DeleteMany(entitiesToDelete);
+
+            //var invoicesDetail = _invoiceDetailRepository.GetListByIdsAsync(masterId);
+            var invoicesDetail1 = _invoiceDetailRepository.GetEntitiesToDelete(masterId);
+            //_unitOfWork.InvoiceDetails.DeleteMany(invoicesDetail);
             return null;
         }
 

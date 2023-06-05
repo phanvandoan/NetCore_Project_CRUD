@@ -9,7 +9,7 @@ namespace NetCore_Project.Repositories
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
         private readonly DbContext _context;
-        private readonly DbSet<TEntity> _dbSet;
+        public readonly DbSet<TEntity> _dbSet;
 
         public GenericRepository(DbContext context)
         {
@@ -57,6 +57,12 @@ namespace NetCore_Project.Repositories
         public void Delete(TEntity entity)
         {
             _dbSet.Remove(entity);
+        }
+
+        public async Task DeleteMany(IEnumerable<TEntity> entities)
+        {
+            _dbSet.RemoveRange(entities);
+            await _context.SaveChangesAsync();
         }
 
         public int CountAll(Expression<Func<TEntity, bool>> filter = null)

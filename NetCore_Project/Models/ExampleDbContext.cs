@@ -82,13 +82,9 @@ namespace NetCore_Project.Models
 
             modelBuilder.Entity<InvoiceDetail>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.Property(e => e.CreatedAt).HasColumnType("datetime");
 
                 entity.Property(e => e.DeletedAt).HasColumnType("datetime");
-
-                entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.InvoiceDetailsNo).HasMaxLength(250);
 
