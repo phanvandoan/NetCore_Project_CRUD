@@ -9,11 +9,8 @@ namespace NetCore_Project.Services
     {
         Task<int> Count(Expression<Func<Invoice, bool>> filter = null);
         Invoice Get(long id);
-        //PagedResultDto<ProductDto> GetListProduct(ProductFilterDto dto, int pageIndex, int pageSize);
-        //Task<ProductDto> GetProductById(long id);
-        Task<Invoice> Create(Invoice masterModel, List<InvoiceDetail> detailModel);
-        //Task<ProductDto> update(long id, ProductDto dto);
-        Task<Invoice> Update(long id, InvoiceDto dto);
-        Task<string> Delete(long id);
+        Task<CreateUpdateInvoiceDto> Create(CreateUpdateInvoiceDto masterModel, List<InvoiceDetail> detailModel);
+        Task<Invoice> Update(CreateUpdateInvoiceDto dto, long id);
+        //Task<string> Delete(long id);
     }
 }

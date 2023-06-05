@@ -27,7 +27,6 @@ namespace NetCore_Project.Utils
             CreateMap<InvoiceDetailDto, InvoiceDetail>().ForMember(dest => dest.Id, opt => opt.Ignore());
 
             CreateMap<ProductFilterDto, Expression<Func<Product, bool>>>().ReverseMap();
-            CreateMap<Expression<Func<ProductDto, bool>>, Expression<Func<Product, bool>>>().ReverseMap();
 
             CreateMap<ProductFilterDto, Product>();
 

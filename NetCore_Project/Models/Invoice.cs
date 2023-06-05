@@ -13,12 +13,10 @@ namespace NetCore_Project.Models
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
         public string? InvoiceNo { get; set; }
-        public Guid? MasterId { get; set; }
+        public Guid MasterId { get; set; }
         public DateTime? InvoiceDate { get; set; }
         public string? PaymentMethod { get; set; }
         public string? Vat { get; set; }
         public long? CustomerId { get; set; }
-
-        public virtual Customer? Customer { get; set; }
     }
 }

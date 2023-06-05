@@ -14,5 +14,6 @@ namespace NetCore_Project.Repositories
         IProductRepository Products { get; }
         ICustomerRepository Customers { get; }
         IInvoiceRepository Invoices { get; }
+        IInvoiceDetailRepository InvoiceDetails { get; }
     }
 }

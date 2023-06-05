@@ -9,12 +9,14 @@ namespace NetCore_Project.Repositories
         public IProductRepository Products { get; }
         public ICustomerRepository Customers { get; }
         public IInvoiceRepository Invoices { get; }
+        public IInvoiceDetailRepository InvoiceDetails { get; }
 
 
         public UnitOfWork(ExampleDbContext context,
             IProductRepository products,
             ICustomerRepository customer,
-            IInvoiceRepository invoice
+            IInvoiceRepository invoice,
+            IInvoiceDetailRepository invoiceDetail
             )
         {
             _context = context;
@@ -22,6 +24,7 @@ namespace NetCore_Project.Repositories
             Products = products;
             Customers = customer;
             Invoices = invoice;
+            InvoiceDetails = invoiceDetail;
         }
 
         public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class

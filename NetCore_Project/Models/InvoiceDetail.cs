@@ -18,7 +18,5 @@ namespace NetCore_Project.Models
         public decimal? Quantity { get; set; }
         public decimal? UnitPrice { get; set; }
         public long? ProductId { get; set; }
-
-        public virtual Product? Product { get; set; }
     }
 }

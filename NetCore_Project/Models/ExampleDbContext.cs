@@ -78,18 +78,17 @@ namespace NetCore_Project.Models
                 entity.Property(e => e.Vat)
                     .HasMaxLength(250)
                     .HasColumnName("VAT");
-
-                entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.Invoices)
-                    .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK__Invoice__Custome__3A81B327");
             });
 
             modelBuilder.Entity<InvoiceDetail>(entity =>
             {
+                entity.HasNoKey();
+
                 entity.Property(e => e.CreatedAt).HasColumnType("datetime");
 
                 entity.Property(e => e.DeletedAt).HasColumnType("datetime");
+
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.InvoiceDetailsNo).HasMaxLength(250);
 
@@ -100,11 +99,6 @@ namespace NetCore_Project.Models
                 entity.Property(e => e.UnitPrice).HasColumnType("decimal(20, 4)");
 
                 entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.InvoiceDetails)
-                    .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("FK__InvoiceDe__Produ__3D5E1FD2");
             });
 
             modelBuilder.Entity<Product>(entity =>

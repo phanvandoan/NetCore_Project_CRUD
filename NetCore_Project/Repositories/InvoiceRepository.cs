@@ -1,4 +1,5 @@
-﻿using NetCore_Project.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using NetCore_Project.Models;
 
 namespace NetCore_Project.Repositories
 {
@@ -8,5 +9,6 @@ namespace NetCore_Project.Repositories
         {
 
         }
+
     }
 }

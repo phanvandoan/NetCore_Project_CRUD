@@ -5,11 +5,6 @@ namespace NetCore_Project.Models
 {
     public partial class Customer
     {
-        public Customer()
-        {
-            Invoices = new HashSet<Invoice>();
-        }
-
         public long Id { get; set; }
         public long? StatusId { get; set; }
         public Guid? RowId { get; set; }
@@ -26,7 +21,5 @@ namespace NetCore_Project.Models
         public string? CustomerCity { get; set; }
         public long? CustomerAccountNo { get; set; }
         public string? CustomerTaxNo { get; set; }
-
-        public virtual ICollection<Invoice> Invoices { get; set; }
     }
 }

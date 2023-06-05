@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using Humanizer;
+using Microsoft.Build.Tasks.Deployment.Bootstrapper;
+using Nest;
 using NetCore_Project.DTO.DataDTO;
 using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
 using NetCore_Project.Repositories;
 using Newtonsoft.Json;
 using System.Linq.Expressions;
+using static StackExchange.Redis.Role;
 
 namespace NetCore_Project.Services
 {
@@ -21,49 +24,80 @@ namespace NetCore_Project.Services
             throw new NotImplementedException();
         }
 
-        public async Task<Invoice> Create(Invoice masterModel, List<InvoiceDetail> detailModel)
+        public async Task<CreateUpdateInvoiceDto> Create(CreateUpdateInvoiceDto masterModel, List<InvoiceDetail> detailModel)
         {
             try
             {
                 Guid masterId = Guid.NewGuid();
                 var master = await CreateInvoice(masterModel, masterId);
                 var details = await CreateInvoiceDetail(detailModel, masterId);
-
-                var rs = await _unitOfWork.Invoices.Create(master);
+                master.InvoiceDetails = details;
                 var result = _unitOfWork.Save();
+                return master;
             }
             catch (Exception ex)
             {
 
                 throw ex;
             }
-            return null;
         }
 
-        public Task<string> Delete(long id)
+
+        public async Task<Invoice> Update(CreateUpdateInvoiceDto dto, long id)
         {
-            throw new NotImplementedException();
+            var invoice = Get(id);
+            if (invoice != null)
+            {
+                var master = await UpdateInvoice(invoice, dto);
+                await DeleteInvoiceDetail(invoice.MasterId);
+                var details = await CreateInvoiceDetail(dto.InvoiceDetails, dto.MasterId);
+            }
+
+            return invoice;
         }
 
         public Invoice Get(long id)
         {
             if (id != null)
             {
-                var invoices = _unitOfWork.Invoices.Get(id);
-                return invoices;
+                var invoice = _unitOfWork.Invoices.Get(id);
+                return invoice;
             }
             return null;
         }
 
-        public Task<Invoice> Update(long id, InvoiceDto dto)
+        private async Task<CreateUpdateInvoiceDto> UpdateInvoice(Invoice invoice, CreateUpdateInvoiceDto dto)
         {
-            throw new NotImplementedException();
+            invoice.StatusId = dto.StatusId;
+            invoice.RowId = dto.RowId;
+            invoice.Used = dto.Used;
+            invoice.UpdatedAt = dto.UpdatedAt;
+            invoice.InvoiceNo = dto.InvoiceNo;
+            invoice.MasterId = dto.MasterId;
+            invoice.InvoiceDate = dto.InvoiceDate;
+            invoice.PaymentMethod = dto.PaymentMethod;
+            invoice.Vat = dto.Vat;
+
+            var cuInvoiceDto = new CreateUpdateInvoiceDto()
+            {
+                StatusId = invoice.StatusId,
+                RowId = invoice.RowId,
+                Used = invoice.Used,
+                CreatedAt = invoice.CreatedAt,
+                UpdatedAt = invoice.UpdatedAt,
+                DeletedAt = invoice.DeletedAt,
+                InvoiceNo = invoice.InvoiceNo,
+                MasterId = invoice.MasterId,
+                InvoiceDate = invoice.InvoiceDate,
+                PaymentMethod = invoice.PaymentMethod,
+                Vat = dto.Vat
+            };
+            return cuInvoiceDto;
         }
-        private async Task<Invoice> CreateInvoice(Invoice dto, Guid masterId)
+        private async Task<CreateUpdateInvoiceDto> CreateInvoice(CreateUpdateInvoiceDto dto, Guid masterId)
         {
             try
             {
-                Invoice res = new();
                 var invoices = new Invoice()
                 {
                     StatusId = dto.StatusId,
@@ -79,7 +113,22 @@ namespace NetCore_Project.Services
                     Vat = dto.Vat
                 };
 
-                return res;
+                var cuInvoiceDto = new CreateUpdateInvoiceDto()
+                {
+                    StatusId = invoices.StatusId,
+                    RowId = invoices.RowId,
+                    Used = invoices.Used,
+                    CreatedAt = invoices.CreatedAt,
+                    UpdatedAt = invoices.UpdatedAt,
+                    DeletedAt = invoices.DeletedAt,
+                    InvoiceNo = invoices.InvoiceNo,
+                    MasterId = masterId,
+                    InvoiceDate = invoices.InvoiceDate,
+                    PaymentMethod = invoices.PaymentMethod,
+                    Vat = dto.Vat
+                };
+                var rs = await _unitOfWork.Invoices.Create(invoices);
+                return cuInvoiceDto;
             }
             catch (Exception ex)
             {
@@ -93,7 +142,6 @@ namespace NetCore_Project.Services
                 List<InvoiceDetail> listInvoiceDetail = new();
                 foreach (var item in dto)
                 {
-                    InvoiceDetail res = new();
                     var invoiceDetails = new InvoiceDetail()
                     {
                         StatusId = item.StatusId,
@@ -108,15 +156,35 @@ namespace NetCore_Project.Services
                         Quantity = item.Quantity,
                         UnitPrice = item.UnitPrice,
                     };
-                    listInvoiceDetail.Add(res);
+                    listInvoiceDetail.Add(invoiceDetails);
                 }
-                return listInvoiceDetail;
+                var rs = await _unitOfWork.InvoiceDetails.CreateMany(listInvoiceDetail);
+                return rs;
 
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+        }
+
+
+        private async Task<string> DeleteInvoiceDetail(Guid masterId)
+        {
+            //string message = null;
+            //if (masterId != null)
+            //{
+            //    var invoiceDetail = _unitOfWork.InvoiceDetails.GetGuidId(masterId);
+            //    if (invoiceDetail != null)
+            //    {
+            //        _unitOfWork.InvoiceDetails.Delete(invoiceDetail);
+            //        var result = _unitOfWork.Save();
+            //        message = "Deleted success!";
+            //        return message;
+            //    }
+            //}
+            //return message;
+            return null;
         }
 
         //private readonly ExampleDbContext _context;

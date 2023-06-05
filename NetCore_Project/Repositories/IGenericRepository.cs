@@ -8,7 +8,9 @@ namespace NetCore_Project.Repositories
         int Count();
         IEnumerable<TEntity> List();
         TEntity Get(long id);
+        //TEntity GetGuidId(Guid id);
         Task<TEntity> Create(TEntity entity);
+        Task<List<TEntity>> CreateMany(IEnumerable<TEntity> entities);
         void Update(TEntity entity);
         void Delete(TEntity entity);
 

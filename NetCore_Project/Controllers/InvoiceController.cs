@@ -17,16 +17,28 @@ namespace NetCore_Project.Controllers
         {
             _invoiceService = invoiceService;
         }
-
-        [HttpPost]
-        public async Task<InvoiceDto> Create(InvoiceDto dto)
+        [HttpGet]
+        public InvoiceDto Get(long id)
         {
-            var master = ConvertDtoToEntity.ConvertToEntity<InvoiceDto, Invoice>(dto);
-            var detail = ConvertDtoToEntity.ConvertListDtoToListEntity<InvoiceDetailDto, InvoiceDetail>(dto.InvoiceDetails.ToList());
-            var rsInvoice = await _invoiceService.Create(master, detail);
-            var invoiceDto = ConvertDtoToEntity.ConvertToDto<Invoice, InvoiceDto>(rsInvoice);
+            var invoice = _invoiceService.Get(id);
+            var invoiceDto = ConvertDtoToEntity.ConvertToDto<Invoice, InvoiceDto>(invoice);
             return invoiceDto;
         }
+        [HttpPost]
+        public async Task<CreateUpdateInvoiceDto> Create(CreateUpdateInvoiceDto dto)
+        {
+            var master = ConvertDtoToEntity.ConvertToEntity<CreateUpdateInvoiceDto, Invoice>(dto);
+            var detail = ConvertDtoToEntity.ConvertListDtoToListEntity<InvoiceDetail, InvoiceDetail>(dto.InvoiceDetails.ToList());
+            var rsInvoice = await _invoiceService.Create(dto, detail);
+            return rsInvoice;
+        }
+        [HttpPut]
+        public async Task<CreateUpdateInvoiceDto> Update(CreateUpdateInvoiceDto dto, long id)
+        {
+            var rsInvoice = await _invoiceService.Update(dto, id);
+            return null;
+        }
+
         //private IInvoiceService _invoiceService;
         //public InvoiceController(IInvoiceService invoiceService)
         //{

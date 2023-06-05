@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Nest;
 using NetCore_Project.DTO;
 using NetCore_Project.Models;
 using System.Linq.Expressions;
@@ -31,12 +32,23 @@ namespace NetCore_Project.Repositories
         {
             return _dbSet.Find(id)!;
         }
+
+        //public TEntity GetGuidId(Guid id)
+        //{
+        //    return _dbSet.FirstOrDefault(entity => entity.MasterId == id);
+        //}
         public async Task<TEntity> Create(TEntity entity)
         {
             _dbSet.Add(entity);
             return entity;
         }
 
+        public async Task<List<TEntity>> CreateMany(IEnumerable<TEntity> entities)
+        {
+            _dbSet.AddRange(entities);
+            _context.SaveChanges();
+            return entities.ToList();
+        }
         public void Update(TEntity entity)
         {
             _context.Entry(entity).State = EntityState.Modified;

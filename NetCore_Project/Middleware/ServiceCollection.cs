@@ -18,16 +18,11 @@ namespace NetCore_Project.Middleware
 
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+            services.AddScoped<IInvoiceDetailRepository, InvoiceDetailRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
-
-            //services.AddScoped<IProductService, ProductService>();
-            //services.AddScoped<ICustomerService, CustomerService>();
-            //services.AddScoped<IInvoiceService, InvoiceService>();
-            //services.AddScoped<IUnitOfWork, UnitOfWork>();
-            //services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         }
     }
 }
