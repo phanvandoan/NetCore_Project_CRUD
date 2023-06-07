@@ -25,10 +25,36 @@ namespace NetCore_Project.Services
             _invoiceDetailRepository = invoiceDetailRepository;
             _validator = validator;
         }
-        public Task<int> Count()
+        public async Task<int> Count(InvoiceFilterDto filter)
         {
-            throw new NotImplementedException();
+            var invoice = new Invoice()
+            {
+                Id = (long)filter.Id!,
+                StatusId = filter.StatusId,
+                InvoiceNo = filter.InvoiceNo,
+            };
+            var count = _unitOfWork.Invoices.CountAll(invoice);
+            return count;
         }
+        public List<Invoice> List(InvoiceFilterDto filter)
+        {
+            var invoice = new Invoice()
+            {
+                Id = (long)filter.Id!,
+                StatusId = filter.StatusId,
+                InvoiceNo = filter.InvoiceNo,
+            };
+            var invoices = _unitOfWork.Invoices.List(invoice);
+            return invoices;
+        }
+
+
+
+
+
+
+
+
 
         public async Task<(CreateUpdateInvoiceDto, Dictionary<string, string>)> Create(CreateUpdateInvoiceDto masterModel, List<InvoiceDetail> detailModel)
         {

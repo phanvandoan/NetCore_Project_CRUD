@@ -5,6 +5,7 @@ using NetCore_Project.DTO.DataDTO;
 using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
 using NetCore_Project.Services;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace NetCore_Project.Controllers
@@ -18,18 +19,25 @@ namespace NetCore_Project.Controllers
         {
             _productService = productService;
         }
-
         [HttpGet]
         public async Task<int> Count([FromQuery] ProductFilterDto filterDto)
         {
-            return 0;
+            var count = await _productService.Count(filterDto);
+            return count;
         }
 
+        [HttpGet]
+        public List<ProductDto> List([FromQuery] ProductFilterDto filterDto)
+        {
+            var products = _productService.List(filterDto);
+            List<ProductDto> rs = MapEntitiesToDTOs(products);
+            return rs;
+        }
         [HttpGet]
         public ProductDto Get(long id)
         {
             var product = _productService.Get(id);
-            var productDto = ConvertDtoToEntity.ConvertToDto<Product, ProductDto>(product);
+            ProductDto productDto = new ProductDto(product);
             return productDto;
         }
 
@@ -62,6 +70,12 @@ namespace NetCore_Project.Controllers
         {
             var rs = await _productService.Delete(id);
             return rs;
+        }
+
+        private List<ProductDto> MapEntitiesToDTOs(List<Product> entities)
+        {
+            List<ProductDto> dtos = entities.Select(entity => new ProductDto(entity)).ToList();
+            return dtos;
         }
     }
 }

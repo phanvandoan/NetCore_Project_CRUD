@@ -4,7 +4,8 @@ namespace NetCore_Project.Repositories
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {
-        Task<int> CountAll();
+        //Task<int> CountAll();
+        int CountAll(TEntity entity);
         int Count();
         IEnumerable<TEntity> List();
         TEntity Get(long id);
@@ -13,10 +14,11 @@ namespace NetCore_Project.Repositories
         Task<List<TEntity>> CreateMany(IEnumerable<TEntity> entities);
         void Update(TEntity entity);
         void Delete(TEntity entity);
+        List<TEntity> List(TEntity entity);
         //Task DeleteMany(IEnumerable<TEntity> entities);
 
         int CountAll(Expression<Func<TEntity, bool>> filter = null);
-        IEnumerable<TEntity> DynamicFind(Expression<Func<TEntity, bool>> filter);
+        //IEnumerable<TEntity> DynamicFind(Expression<Func<TEntity, bool>> filter);
         IEnumerable<TEntity> OrFilter(params Expression<Func<TEntity, bool>>[] filters);
         IEnumerable<TEntity> DynamicOrder(string property, bool isAscending);
     }

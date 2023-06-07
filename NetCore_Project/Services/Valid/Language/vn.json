@@ -1,0 +1,52 @@
+﻿{
+  "ErrorCode": {
+    "Customer": {
+      "CustomerNoEmpty": "Mã khách hàng chưa được nhập",
+      "LengthCustomerNo": "Mã khách hàng không được vượt quá số ký tự cho phép",
+      "CustomerFirstNameEmpty": "Họ chưa được nhập",
+      "LengthCustomerFirstName": "Họ không được vượt quá số ký tự cho phép",
+      "CustomerLastNameEmpty": "Tên chưa được nhập",
+      "LengthCustomerLastName": "Tên không được vượt quá số ký tự cho phép",
+      "CustomerCompanyEmpty": "Tên công ty chưa được nhập",
+      "LengthCustomerCompany": "Tên công ty không được vượt quá số ký tự cho phép",
+      "CustomerAddressEmpty": "Địa chỉ chưa được nhập",
+      "LengthCustomerAddress": "Địa chỉ không được vượt quá số ký tự cho phép",
+      "CustomerDistrictEmpty": "Quận/Huyện chưa được nhập",
+      "LengthCustomerDistrict": "Quận/Huyện không được vượt quá số ký tự cho phép",
+      "CustomerCityEmpty": "Tỉnh/TP chưa được nhập",
+      "LengthCustomerCity": "Tỉnh/TP không được vượt quá số ký tự cho phép",
+      "CustomerTaxNoEmpty": "Mã số thuế khách hàng chưa được nhập",
+      "LengthCustomerTaxNo": "Mã số thuế khách hàng không được vượt quá số ký tự cho phép"
+    },
+    "Product": {
+      "ProductNoEmpty": "Mã sản phẩm chưa được nhập",
+      "LengthProductNo": "Mã sản phẩm không được vượt quá số ký tự cho phép",
+      "ProductNameEmpty": "Tên sản phẩm chưa được nhập",
+      "LengthProductName": "Tên sản phẩm không được vượt quá số ký tự cho phép",
+      "UnitEmpty": "Đơn vị tính chưa được nhập",
+      "LengthUnit": "Đơn vị tính không được vượt quá số ký tự cho phép"
+    },
+    "Invoice": {
+      "InvoiceNoEmpty": "Mã hóa đơn chưa được nhập",
+      "LengthInvoiceNo": "Mã hóa đơn không được vượt quá số ký tự cho phép",
+      "InvoiceDateEmpty": "Ngày hóa đơn chưa được nhập",
+      "LengthInvoiceDate": "Ngày hóa đơn không được vượt quá số ký tự cho phép",
+      "PaymentMethodEmpty": "Hình thức thanh toán chưa được nhập",
+      "LengthPaymentMethod": "Hình thức thanh toán không được vượt quá số ký tự cho phép",
+      "VatEmpty": "% Thuế chưa được nhập",
+      "LengthVat": "% Thuế không được vượt quá số ký tự cho phép"
+    },
+    "InvoiceDetail": {
+      "InvoiceDetailsNoEmpty": "Mã chi tiết sản phẩm chưa được nhập",
+      "LengthInvoiceDetailsNo": "Mã chi tiết không được vượt quá số ký tự cho phép",
+      "SequenceNoEmpty": "Số thứ tự chưa được nhập",
+      "LengthSequenceNo": "Số thứ tự không được vượt quá số ký tự cho phép",
+      "QuantityEmpty": "Số lượng chưa được nhập",
+      "LengthQuantity": "Số lượng không được vượt quá số ký tự cho phép",
+      "TypeQuantity": "Số lượng không đúng định dạng",
+      "UnitPriceEmpty": "Đơn giá chưa được nhập",
+      "LengthUnitPrice": "Đơn giá không được vượt quá số ký tự cho phép",
+      "TypeUnitPrice": "Đơn giá không đúng định dạng"
+    }
+  }
+}

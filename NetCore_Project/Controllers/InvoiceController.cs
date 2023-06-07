@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NetCore_Project.DTO;
 using NetCore_Project.DTO.DataDTO;
+using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
 using NetCore_Project.Services;
 
@@ -15,6 +16,26 @@ namespace NetCore_Project.Controllers
         {
             _invoiceService = invoiceService;
         }
+        [HttpGet]
+        public async Task<int> Count([FromQuery] InvoiceFilterDto filterDto)
+        {
+            int count = await _invoiceService.Count(filterDto);
+            return count;
+        }
+        [HttpGet]
+        public List<InvoiceDto> List([FromQuery] InvoiceFilterDto filterDto)
+        {
+            var invoice = _invoiceService.List(filterDto);
+            List<InvoiceDto> rs = MapEntitiesToDTOs(invoice);
+            return rs;
+        }
+
+
+
+
+
+
+
         [HttpGet]
         public Task<CreateUpdateInvoiceDto> Get(long id)
         {
@@ -50,6 +71,12 @@ namespace NetCore_Project.Controllers
         {
             var rs = await _invoiceService.Delete(id);
             return rs;
+        }
+
+        private List<InvoiceDto> MapEntitiesToDTOs(List<Invoice> entities)
+        {
+            List<InvoiceDto> dtos = entities.Select(entity => new InvoiceDto(entity)).ToList();
+            return dtos;
         }
     }
 }

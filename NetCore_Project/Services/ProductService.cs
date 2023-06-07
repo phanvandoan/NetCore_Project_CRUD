@@ -21,10 +21,28 @@ namespace NetCore_Project.Services
             _unitOfWork = unitOfWork;
             _validator = validator;
         }
-        public async Task<int> Count(Expression<Func<Product, bool>> filter)
+        public async Task<int> Count(ProductFilterDto filter)
         {
-            var count = _unitOfWork.Products.DynamicFind(filter);
-            return count.Count();
+            var product = new Product()
+            {
+                ProductNo = filter.ProductNo,
+                ProductName = filter.ProductName,
+                Unit = filter.Unit,
+            };
+            var count = _unitOfWork.Products.CountAll(product);
+            return count;
+        }
+
+        public List<Product> List(ProductFilterDto filter)
+        {
+            var product = new Product()
+            {
+                ProductNo = filter.ProductNo,
+                ProductName = filter.ProductName,
+                Unit = filter.Unit,
+            };
+            var products = _unitOfWork.Products.List(product);
+            return products;
         }
 
         public Product Get(long id)

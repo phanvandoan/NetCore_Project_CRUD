@@ -16,9 +16,15 @@ namespace NetCore_Project.Repositories
             _context = context;
             _dbSet = _context.Set<TEntity>();
         }
-        public async Task<int> CountAll()
+        public int CountAll(TEntity entity)
         {
-            return _dbSet.Count();
+            return _context.Set<TEntity>().Count();
+        }
+
+        public List<TEntity> List(TEntity entity)
+        {
+            var rs = _context.Set<TEntity>();
+            return rs.ToList();
         }
         public int Count()
         {
@@ -32,11 +38,6 @@ namespace NetCore_Project.Repositories
         {
             return _dbSet.Find(id)!;
         }
-
-        //public TEntity GetGuidId(Guid id)
-        //{
-        //    return _dbSet.FirstOrDefault(entity => entity.MasterId == id);
-        //}
         public async Task<TEntity> Create(TEntity entity)
         {
              _dbSet.Add(entity);
@@ -76,9 +77,14 @@ namespace NetCore_Project.Repositories
 
             return query.Count();
         }
-        public IEnumerable<TEntity> DynamicFind(Expression<Func<TEntity, bool>> filter)
+        //public IEnumerable<TEntity> DynamicFind(Expression<Func<TEntity, bool>> filter)
+        //{
+        //    return _dbSet.Where(filter);
+        //}
+
+        public List<TEntity> DynamicFind<TEntity>(IEnumerable<TEntity> source, Func<TEntity, bool> predicate)
         {
-            return _dbSet.Where(filter);
+            return source.Where(predicate).ToList();
         }
 
         public IEnumerable<TEntity> OrFilter(params Expression<Func<TEntity, bool>>[] filters)

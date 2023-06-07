@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Nest;
 using NetCore_Project.DTO.DataDTO;
 using NetCore_Project.DTO.FilterDTO;
 using NetCore_Project.Models;
@@ -22,10 +23,27 @@ namespace NetCore_Project.Services
             _validator = validator;
             _unitOfWork = unitOfWork;
         }
-        public async Task<int> Count(Expression<Func<Customer, bool>> filter)
+        public async Task<int> Count(CustomerFilterDto filter)
         {
-            var count = _unitOfWork.Customers.DynamicFind(filter);
-            return count.Count();
+            var customer = new Customer()
+            {
+                CustomerNo = filter.CustomerNo,
+                StatusId = filter.StatusId,
+                CustomerTaxNo = filter.CustomerTaxNo,
+            };
+            var count = _unitOfWork.Customers.CountAll(customer);
+            return count;
+        }
+        public List<Customer> List(CustomerFilterDto filter)
+        {
+            var customer = new Customer()
+            {
+                CustomerNo = filter.CustomerNo,
+                StatusId = filter.StatusId,
+                CustomerTaxNo = filter.CustomerTaxNo,
+            };
+            var customers = _unitOfWork.Customers.List(customer);
+            return customers;
         }
 
         public Customer Get(long id)
@@ -87,7 +105,6 @@ namespace NetCore_Project.Services
                     customer.CustomerCity = dto.CustomerCity;
                     customer.CustomerAccountNo = dto.CustomerAccountNo;
                     customer.CustomerTaxNo = dto.CustomerTaxNo;
-
                     _unitOfWork.Customers.Update(customer);
                     _unitOfWork.Save();
                     return (dto, null);
